@@ -63,7 +63,7 @@ func (s *server) Init(a app.AppInterface) error {
 		return err
 	}
 
-	location, err := time.LoadLocation(s.conf.TimeZone)
+	location, err := time.LoadLocation(s.conf.App.TimeZone)
 	if err != nil {
 		return err
 	}
@@ -82,6 +82,10 @@ func (s *server) Init(a app.AppInterface) error {
 
 func (s *server) runMonitor() {
 	defer s.wait.Done()
+	if s.conf.App.PprofOpen != "On" {
+		return
+	}
+
 	s.pprof = &http.Server{Addr: fmt.Sprintf("%s:%d", s.conf.Listen.Host, s.conf.Listen.Port+10000), Handler: http.DefaultServeMux}
 	if err := s.pprof.ListenAndServe(); err != nil {
 		debug.Erro("run pprof failure, error: %s", err)

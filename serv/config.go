@@ -9,9 +9,14 @@ import (
 )
 
 type Config struct {
-	Etcd     etcd.Config `yaml:"etcd"`
-	Listen   Listen      `yaml:"listen"`
-	TimeZone string      `yaml:"time_zone"`
+	Etcd   etcd.Config `yaml:"etcd"`
+	Listen Listen      `yaml:"listen"`
+	App    App         `yaml:"app"`
+}
+
+type App struct {
+	TimeZone  string `yaml:"time_zone"`
+	PprofOpen string `yaml:"pprof_open"`
 }
 
 type Listen struct {
