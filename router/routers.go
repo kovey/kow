@@ -1,7 +1,6 @@
 package router
 
 import (
-	"net"
 	"net/http"
 	"strings"
 	"sync"
@@ -23,9 +22,9 @@ type Routers struct {
 	globalAllowed          string
 	NotFound               *Chain
 	MethodNotAllowed       *Chain
-	PanicHandler           *Chain
-	trustedProxies         []string
-	trustedCIDRs           []*net.IPNet
+	//PanicHandler           *Chain
+	//trustedProxies         []string
+	//trustedCIDRs           []*net.IPNet
 }
 
 func NewRouters() *Routers {

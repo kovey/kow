@@ -8,7 +8,7 @@ import (
 
 const (
 	rule_chinese = "chinese"
-	chinese_reg  = `[\u4e00-\u9fa5]`
+	chinese_reg  = `[\\u4e00-\\u9fa5]`
 )
 
 type Chinese struct {

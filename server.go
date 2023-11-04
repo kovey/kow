@@ -94,7 +94,9 @@ func (s *server) runOhter() {
 		return
 	}
 
-	s.e.OnRun()
+	if err := s.e.OnRun(); err != nil {
+		debug.Erro("event.OnRun failure, error: %s", err)
+	}
 }
 
 func (s *server) Run(a app.AppInterface) error {
@@ -116,10 +118,14 @@ func (s *server) Run(a app.AppInterface) error {
 
 func (s *server) Shutdown(a app.AppInterface) error {
 	if s.pprof != nil {
-		s.pprof.Shutdown(context.Background())
+		if err := s.pprof.Shutdown(context.Background()); err != nil {
+			debug.Erro("shutdown pprof failure, error: %s", err)
+		}
 	}
 
-	engine.Shutdown()
+	if err := engine.Shutdown(); err != nil {
+		debug.Erro("engine shutdown failure, error: %s", err)
+	}
 
 	if s.e != nil {
 		s.e.OnShutdown()
