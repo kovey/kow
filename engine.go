@@ -3,27 +3,22 @@ package kow
 import (
 	cc "context"
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/middleware"
 	"github.com/kovey/kow/router"
+	"github.com/kovey/pool"
 )
 
 type Engine struct {
 	routers    *router.Routers
-	pool       sync.Pool
 	maxRunTime time.Duration
 	serv       *http.Server
 }
 
 func NewEngine() *Engine {
-	e := &Engine{routers: router.NewRouters()}
-	e.pool.New = func() any {
-		return context.NewContext()
-	}
-	return e
+	return &Engine{routers: router.NewRouters()}
 }
 
 func NewDefault() *Engine {
@@ -87,23 +82,13 @@ func (e *Engine) Middleware(middlewars ...context.MiddlewareInterface) {
 }
 
 func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	c := e.getContext()
-	defer e.putContext(c)
-	c.Init(w, r)
-	cancel := c.WithTimeout(e.maxRunTime)
+	parent, cancel := cc.WithTimeout(r.Context(), e.maxRunTime)
 	defer cancel()
 
-	e.routers.HandleHTTP(c)
-}
+	ctx := context.NewContext(parent, w, r)
+	defer pool.PutNoCtx(ctx.Context)
 
-func (e *Engine) getContext() *context.Context {
-	c, _ := e.pool.Get().(*context.Context)
-	return c
-}
-
-func (e *Engine) putContext(c *context.Context) {
-	c.Reset()
-	e.pool.Put(c)
+	e.routers.HandleHTTP(ctx)
 }
 
 func (e *Engine) Run(addr string) error {

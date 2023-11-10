@@ -14,10 +14,24 @@ import (
 	"github.com/kovey/discovery/krpc"
 	"github.com/kovey/kow/validator"
 	"github.com/kovey/kow/validator/rule"
+	"github.com/kovey/pool"
+	"github.com/kovey/pool/object"
 )
 
+const (
+	ctx_namespace = "ko.kow.context"
+	ctx_name      = "Context"
+)
+
+func init() {
+	pool.DefaultNoCtx(ctx_namespace, ctx_name, func() any {
+		return &Context{Params: make(Params), Rpcs: make(Rpcs), data: make(map[string]any), ObjNoCtx: object.NewObjNoCtx(ctx_namespace, ctx_name)}
+	})
+}
+
 type Context struct {
-	context.Context
+	*object.ObjNoCtx
+	*pool.Context
 	w               http.ResponseWriter
 	Request         *http.Request
 	ac              ActionInterface
@@ -30,8 +44,13 @@ type Context struct {
 	data            map[string]any
 }
 
-func NewContext() *Context {
-	return &Context{Params: make(Params), Rpcs: make(Rpcs), data: make(map[string]any)}
+func NewContext(parent context.Context, w http.ResponseWriter, r *http.Request) *Context {
+	pc := pool.NewContext(parent)
+	ctx := pc.GetNoCtx(ctx_namespace, ctx_name).(*Context)
+	ctx.Context = pc
+	ctx.w = w
+	ctx.Request = r
+	return ctx
 }
 
 func (c *Context) Set(key string, val any) {
@@ -90,7 +109,7 @@ func (c *Context) GetBool(key string) bool {
 
 func (c *Context) WithTimeout(timeout time.Duration) context.CancelFunc {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), timeout)
-	c.Context = ctx
+	c.Context = pool.NewContext(ctx)
 	c.Request = c.Request.WithContext(c)
 	return cancel
 }
@@ -105,11 +124,6 @@ func (c *Context) IsTimeout() bool {
 
 func (c *Context) GetHeader(key string) string {
 	return c.Request.Header.Get(key)
-}
-
-func (c *Context) Init(w http.ResponseWriter, r *http.Request) {
-	c.w = w
-	c.Request = r
 }
 
 func (c *Context) Writer() http.ResponseWriter {
