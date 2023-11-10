@@ -8,7 +8,6 @@ import (
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/middleware"
 	"github.com/kovey/kow/router"
-	"github.com/kovey/pool"
 )
 
 type Engine struct {
@@ -86,7 +85,7 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 
 	ctx := context.NewContext(parent, w, r)
-	defer pool.PutNoCtx(ctx.Context)
+	defer ctx.Drop()
 
 	e.routers.HandleHTTP(ctx)
 }
