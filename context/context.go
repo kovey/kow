@@ -316,7 +316,3 @@ func (c *Context) ClientIp() string {
 	info := strings.Split(c.Request.RemoteAddr, ":")
 	return info[0]
 }
-
-func (c *Context) Drop() {
-	pool.PutNoCtx(c.Context)
-}
