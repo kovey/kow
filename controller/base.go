@@ -27,7 +27,7 @@ func NewBaseBy(tplPath, group string, services ...krpc.ServiceName) *Base {
 
 func (b *Base) Group() string {
 	if b.group == grpc.Str_Empty {
-		return grpc.Default_Group
+		return grpc.Default
 	}
 
 	return b.group

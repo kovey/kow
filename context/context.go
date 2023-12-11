@@ -179,7 +179,7 @@ func (c *Context) action() {
 
 	if len(c.ac.Services()) > 0 {
 		for _, sv := range c.ac.Services() {
-			conn, err := krpc.DialWithGroup(sv, c.ac.Group())
+			conn, err := krpc.Dial(sv, c.ac.Group())
 			if err != nil {
 				if err := c.Html(http.StatusInternalServerError, nil); err != nil {
 					debug.Erro(err.Error())
