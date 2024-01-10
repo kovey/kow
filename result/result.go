@@ -36,7 +36,7 @@ func Err(ctx *context.Context, code Codes, msg string) error {
 }
 
 func Timeout(ctx *context.Context) error {
-	return ctx.Html(http.StatusRequestTimeout, nil)
+	return ctx.Html(http.StatusGatewayTimeout, nil)
 }
 
 func Convert(ctx *context.Context, err error) error {
