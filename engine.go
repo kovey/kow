@@ -82,10 +82,9 @@ func (e *Engine) Middleware(middlewars ...context.MiddlewareInterface) {
 
 func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	parent, cancel := cc.WithTimeout(r.Context(), e.maxRunTime)
-	defer cancel()
-
 	ctx := context.NewContext(parent, w, r)
 	defer ctx.Drop()
+	defer cancel()
 
 	e.routers.HandleHTTP(ctx)
 }
