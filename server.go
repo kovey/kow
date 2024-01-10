@@ -135,6 +135,7 @@ func (s *server) Shutdown(a app.AppInterface) error {
 		s.e.OnShutdown()
 	}
 
+	resolver.Shutdown()
 	s.wait.Wait()
 	return nil
 }

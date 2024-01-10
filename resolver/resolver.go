@@ -9,3 +9,7 @@ func Register(conf etcd.Config) error {
 	resolver.Init(conf)
 	return resolver.Register()
 }
+
+func Shutdown() {
+	resolver.Shutdown()
+}
