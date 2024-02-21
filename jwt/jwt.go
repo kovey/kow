@@ -1,12 +1,13 @@
 package jwt
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/kovey/kow/encoding/json"
 )
 
 const (

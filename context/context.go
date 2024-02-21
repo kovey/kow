@@ -2,13 +2,14 @@ package context
 
 import (
 	"context"
-	"encoding/json"
-	"encoding/xml"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/kovey/kow/encoding/json"
+	"github.com/kovey/kow/encoding/xml"
 
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/discovery/krpc"

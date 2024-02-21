@@ -1,8 +1,9 @@
 package jwt
 
 import (
-	"encoding/json"
 	"time"
+
+	"github.com/kovey/kow/encoding/json"
 )
 
 type Paylaod[T any] struct {
