@@ -5,13 +5,13 @@ import (
 )
 
 type Default struct {
-	M     string
-	P     string
+	m     string
+	p     string
 	chain *Chain
 }
 
 func NewDefault(m string, p string, a context.ActionInterface) *Default {
-	return &Default{M: m, P: p, chain: &Chain{Action: a}}
+	return &Default{m: m, p: p, chain: &Chain{Action: a}}
 }
 
 func (d *Default) Middleware(middlewares ...context.MiddlewareInterface) {
@@ -19,11 +19,11 @@ func (d *Default) Middleware(middlewares ...context.MiddlewareInterface) {
 }
 
 func (d *Default) Method() string {
-	return d.M
+	return d.m
 }
 
 func (d *Default) Path() string {
-	return d.P
+	return d.p
 }
 
 func (d *Default) Chain() *Chain {
