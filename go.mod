@@ -3,8 +3,8 @@ module github.com/kovey/kow
 go 1.20
 
 require (
-	github.com/kovey/cli-go v1.0.8
-	github.com/kovey/debug-go v0.0.4
+	github.com/kovey/cli-go v1.0.9
+	github.com/kovey/debug-go v0.0.5
 	github.com/kovey/discovery v0.0.4
 	github.com/kovey/pool v0.0.7
 	google.golang.org/grpc v1.59.0
