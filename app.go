@@ -28,7 +28,7 @@ func PUT(path string, ac context.ActionInterface) router.RouterInterface {
 	return engine.DefRouter(http.MethodPut, path, ac)
 }
 
-func Patch(path string, ac context.ActionInterface) router.RouterInterface {
+func PATCH(path string, ac context.ActionInterface) router.RouterInterface {
 	return engine.DefRouter(http.MethodPatch, path, ac)
 }
 
@@ -40,7 +40,7 @@ func DELETE(path string, ac context.ActionInterface) router.RouterInterface {
 	return engine.DefRouter(http.MethodDelete, path, ac)
 }
 
-func Connect(path string, ac context.ActionInterface) router.RouterInterface {
+func CONNECT(path string, ac context.ActionInterface) router.RouterInterface {
 	return engine.DefRouter(http.MethodConnect, path, ac)
 }
 
