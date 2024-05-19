@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/middleware"
 	"github.com/kovey/kow/router"
@@ -23,6 +24,7 @@ func NewEngine() *Engine {
 func NewDefault() *Engine {
 	e := NewEngine()
 	e.Middleware(&middleware.Logger{}, &middleware.Recovery{})
+	e.routers.NotFound = &router.Chain{}
 	return e
 }
 
@@ -72,6 +74,10 @@ func (e *Engine) DefRouter(method string, path string, ac context.ActionInterfac
 	return ro
 }
 
+func (e *Engine) Group(path string) *router.Group {
+	return e.routers.Group(path)
+}
+
 func (e *Engine) Router(ro router.RouterInterface) {
 	e.routers.Add(ro)
 }
@@ -91,6 +97,7 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (e *Engine) Run(addr string) error {
 	e.serv = &http.Server{Addr: addr, Handler: e}
+	debug.Info("listen on: %s", addr)
 	return e.serv.ListenAndServe()
 }
 

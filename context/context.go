@@ -175,6 +175,8 @@ func (c *Context) MiddlerwareStart() {
 
 func (c *Context) action() {
 	if c.ac == nil {
+		c.status = http.StatusNotFound
+		http.NotFound(c.w, c.Request)
 		return
 	}
 

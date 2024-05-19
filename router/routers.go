@@ -246,3 +246,7 @@ func (r *Routers) ServeFiles(path string, root http.FileSystem, chain *Chain) {
 	chain.fileServer = http.FileServer(root)
 	r.Handle(http.MethodGet, path, chain)
 }
+
+func (r *Routers) Group(path string) *Group {
+	return NewGroup(path, r)
+}
