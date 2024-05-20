@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/kovey/debug-go/debug"
@@ -28,6 +29,7 @@ func (c *Chinese) Valid(key string, val any, params ...any) bool {
 	ok, err := regexp.Match(chinese_reg, []byte(tmp))
 	if err != nil {
 		debug.Erro("regexp matched failure in chinese, error: %s", err)
+		c.err = fmt.Errorf("value[%s] of field[%s] is not chinese", tmp, key)
 		return false
 	}
 

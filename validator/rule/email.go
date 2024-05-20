@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/kovey/debug-go/debug"
@@ -28,6 +29,7 @@ func (e *Email) Valid(key string, val any, params ...any) bool {
 	ok, err := regexp.Match(email_reg, []byte(tmp))
 	if err != nil {
 		debug.Erro("regexp matched failure in email, error: %s", err)
+		e.err = fmt.Errorf("value[%s] of field[%s] is not email", tmp, key)
 		return false
 	}
 

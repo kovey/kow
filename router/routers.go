@@ -157,7 +157,7 @@ func (r *Routers) Lookup(method, path string) (*Chain, context.Params, bool) {
 
 func (r *Routers) HandleHTTP(c *context.Context) {
 	path := c.Request.URL.Path
-	c.Middlerware(r.middlewares...)
+	c.Middleware(r.middlewares...)
 
 	if root := r.trees[c.Request.Method]; root != nil {
 		if chain, ps, tsr := root.getValue(path, r.getParams); chain != nil {

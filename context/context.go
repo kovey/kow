@@ -200,7 +200,7 @@ func (c *Context) action() {
 	}
 }
 
-func (c *Context) Middlerware(middlewares ...MiddlewareInterface) {
+func (c *Context) Middleware(middlewares ...MiddlewareInterface) {
 	c.middlewares = append(c.middlewares, middlewares...)
 	c.middleCount = len(c.middlewares)
 }
@@ -318,4 +318,16 @@ func (c *Context) ClientIp() string {
 
 	info := strings.Split(c.Request.RemoteAddr, ":")
 	return info[0]
+}
+
+func Get[T any](ctx *Context, key string) T {
+	var s T
+	res, ok := ctx.Get(key)
+	if !ok {
+		return s
+	}
+	if tmp, ok := res.(T); ok {
+		return tmp
+	}
+	return s
 }

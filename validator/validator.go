@@ -27,15 +27,15 @@ func (v *Validator) Valid(key string, value any, rules []*rule.Rule, all map[str
 
 		if rule.Func == "eq_feild" {
 			if len(rule.Params) != 1 {
-				return fmt.Errorf("param[%s] valid with[%s] failure", key, rule.Func)
+				return fmt.Errorf("param[%s] valid with[%s] failure, params count not 1", key, rule.Func)
 			}
 			kk, ok := rule.Params[0].(string)
 			if !ok {
-				return fmt.Errorf("param[%s] valid with[%s] failure", key, rule.Func)
+				return fmt.Errorf("param[%s] valid with[%s] failure, params[%v] not string", key, rule.Func, rule.Params[0])
 			}
 			val, ok := all[kk]
 			if !ok {
-				return fmt.Errorf("param[%s] valid with[%s] failure", key, rule.Func)
+				return fmt.Errorf("param[%s] valid with[%s] failure, field[%s] not found", key, rule.Func, kk)
 			}
 			if valid.Valid(key, value, val) {
 				continue
@@ -81,7 +81,7 @@ func init() {
 // eq:int:1,2 (eq is rule name, int is param type, 1, 2 are params)
 //
 // rule names:
-// eq,eq_feild,ge,gt,le,len,lt,minlen,maxlen,regx
+// eq,eq_feild,ge,gt,le,len,lt,minlen,maxlen,regx,chinese,email,jwt,url
 func RegRule(key string, rules ...string) bool {
 	return r.add(key, rules...)
 }

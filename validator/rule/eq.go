@@ -1,5 +1,7 @@
 package rule
 
+import "fmt"
+
 const (
 	rule_eq = "eq"
 )
@@ -14,8 +16,13 @@ func NewEq() *Eq {
 
 func (g *Eq) Valid(key string, val any, params ...any) bool {
 	if len(params) != 1 {
+		g.err = fmt.Errorf("params: %+v format error", params)
 		return false
 	}
 
-	return val == params[0]
+	res := val == params[0]
+	if !res {
+		g.err = fmt.Errorf("value[%v] of field[%s] not equal give[%v]", val, key, params[0])
+	}
+	return res
 }

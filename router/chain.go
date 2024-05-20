@@ -19,7 +19,7 @@ func (c *Chain) handle(ct *context.Context) {
 		return
 	}
 
-	ct.Middlerware(c.Middlewares...)
+	ct.Middleware(c.Middlewares...)
 	ct.MiddlerwareStart()
 }
 
