@@ -104,8 +104,10 @@ func (s *server) runOhter() {
 }
 
 func (s *server) Run(a app.AppInterface) error {
-	if err := resolver.Register(s.conf.Etcd); err != nil {
-		return err
+	if s.conf.App.EtcdOpen != "Off" {
+		if err := resolver.Register(s.conf.Etcd); err != nil {
+			return err
+		}
 	}
 
 	s.wait.Add(1)
@@ -135,7 +137,9 @@ func (s *server) Shutdown(a app.AppInterface) error {
 		s.e.OnShutdown()
 	}
 
-	resolver.Shutdown()
+	if s.conf.App.EtcdOpen != "Off" {
+		resolver.Shutdown()
+	}
 	s.wait.Wait()
 	return nil
 }

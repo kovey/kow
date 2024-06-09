@@ -17,6 +17,7 @@ type Config struct {
 type App struct {
 	TimeZone  string `yaml:"time_zone"`
 	PprofOpen string `yaml:"pprof_open"`
+	EtcdOpen  string `yaml:"etcd_open"`
 }
 
 type Listen struct {
