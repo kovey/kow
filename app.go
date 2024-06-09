@@ -7,6 +7,7 @@ import (
 	"github.com/kovey/cli-go/app"
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
+	"github.com/kovey/kow/controller"
 	"github.com/kovey/kow/middleware"
 	"github.com/kovey/kow/router"
 	"github.com/kovey/kow/serv"
@@ -64,10 +65,26 @@ func Run(name string, e serv.EventInterface) {
 
 func OpenCors(headers ...string) {
 	engine.routers.HandleOPTIONS = true
-	engine.routers.GlobalOPTIONS = &router.Chain{}
+	engine.routers.GlobalOPTIONS = &router.Chain{Action: controller.NewOptions()}
 	engine.Middleware(&middleware.OpenCors{Headers: headers})
 }
 
 func Middleware(m ...context.MiddlewareInterface) {
 	engine.Middleware(m...)
+}
+
+func SetGlobalOPTIONS(act context.ActionInterface) {
+	if engine.routers.GlobalOPTIONS == nil {
+		engine.routers.GlobalOPTIONS = &router.Chain{}
+	}
+
+	engine.routers.GlobalOPTIONS.Action = act
+}
+
+func SetNotFound(act context.ActionInterface) {
+	if engine.routers.NotFound == nil {
+		engine.routers.NotFound = &router.Chain{}
+	}
+
+	engine.routers.NotFound.Action = act
 }

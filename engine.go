@@ -7,6 +7,7 @@ import (
 
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
+	"github.com/kovey/kow/controller"
 	"github.com/kovey/kow/middleware"
 	"github.com/kovey/kow/router"
 )
@@ -24,7 +25,7 @@ func NewEngine() *Engine {
 func NewDefault() *Engine {
 	e := NewEngine()
 	e.Middleware(&middleware.Logger{}, &middleware.Recovery{})
-	e.routers.NotFound = &router.Chain{}
+	e.routers.NotFound = &router.Chain{Action: controller.NewNotFound()}
 	return e
 }
 

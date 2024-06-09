@@ -5,6 +5,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
 )
 
@@ -161,7 +162,6 @@ func (r *Routers) HandleHTTP(c *context.Context) {
 
 	if root := r.trees[c.Request.Method]; root != nil {
 		if chain, ps, tsr := root.getValue(path, r.getParams); chain != nil {
-			c.SetAction(chain.Action)
 			if ps != nil {
 				c.SetParams(ps)
 				chain.handle(c)
@@ -224,6 +224,7 @@ func (r *Routers) HandleHTTP(c *context.Context) {
 	}
 
 	if r.NotFound != nil {
+		debug.Dbug("%s not found", c.Request.URL.Path)
 		r.NotFound.handle(c)
 	} else {
 		http.NotFound(c.Writer(), c.Request)
