@@ -52,6 +52,10 @@ func parseRule(ru string) *rule.Rule {
 		debug.Erro("rule[%s] format error", ru)
 		return nil
 	default:
+		if info[0] == "regx" {
+			return rule.NewRule(info[0], []any{info[2]})
+		}
+
 		params := strings.Split(info[2], ",")
 		tmp := make([]any, len(params))
 		switch info[1] {
