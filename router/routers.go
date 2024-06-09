@@ -5,7 +5,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
 )
 
@@ -224,7 +223,6 @@ func (r *Routers) HandleHTTP(c *context.Context) {
 	}
 
 	if r.NotFound != nil {
-		debug.Dbug("%s not found", c.Request.URL.Path)
 		r.NotFound.handle(c)
 	} else {
 		http.NotFound(c.Writer(), c.Request)
