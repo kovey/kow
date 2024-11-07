@@ -4,13 +4,17 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
+	"strings"
 	"sync"
 	"time"
 
 	_ "net/http/pprof"
 
 	"github.com/kovey/cli-go/app"
+	"github.com/kovey/cli-go/env"
 	"github.com/kovey/debug-go/debug"
+	"github.com/kovey/discovery/etcd"
 	"github.com/kovey/kow/resolver"
 	"github.com/kovey/kow/serv"
 )
@@ -19,7 +23,6 @@ var engine = NewDefault()
 
 type server struct {
 	*app.ServBase
-	conf  *serv.Config
 	wait  sync.WaitGroup
 	e     serv.EventInterface
 	pprof *http.Server
@@ -29,28 +32,7 @@ func newServer(e serv.EventInterface) *server {
 	return &server{wait: sync.WaitGroup{}, e: e}
 }
 
-func (s *server) loadConf(a app.AppInterface) error {
-	path, err := a.Get("c")
-	if err != nil {
-		return err
-	}
-
-	tmp := path.String()
-	if tmp == "" {
-		return fmt.Errorf("path is empty")
-	}
-
-	conf := &serv.Config{}
-	if err := conf.Load(tmp); err != nil {
-		return err
-	}
-
-	s.conf = conf
-	return nil
-}
-
 func (s *server) Flag(a app.AppInterface) error {
-	a.Flag("c", "", app.TYPE_STRING, "app config file path")
 	if s.e != nil {
 		return s.e.OnFlag(a)
 	}
@@ -59,11 +41,7 @@ func (s *server) Flag(a app.AppInterface) error {
 }
 
 func (s *server) Init(a app.AppInterface) error {
-	if err := s.loadConf(a); err != nil {
-		return err
-	}
-
-	location, err := time.LoadLocation(s.conf.App.TimeZone)
+	location, err := time.LoadLocation(os.Getenv(APP_TIME_ZONE))
 	if err != nil {
 		return err
 	}
@@ -82,11 +60,15 @@ func (s *server) Init(a app.AppInterface) error {
 
 func (s *server) runMonitor() {
 	defer s.wait.Done()
-	if s.conf.App.PprofOpen != "On" {
+	if ppOpen, err := env.GetBool(APP_PPROF_OPEN); err != nil || !ppOpen {
+		return
+	}
+	port, err := env.GetInt(SERV_PORT)
+	if err != nil {
 		return
 	}
 
-	s.pprof = &http.Server{Addr: fmt.Sprintf("%s:%d", s.conf.Listen.Host, s.conf.Listen.Port+10000), Handler: http.DefaultServeMux}
+	s.pprof = &http.Server{Addr: fmt.Sprintf("%s:%d", os.Getenv(SERV_PORT), port+10000), Handler: http.DefaultServeMux}
 	if err := s.pprof.ListenAndServe(); err != nil {
 		debug.Erro("run pprof failure, error: %s", err)
 	}
@@ -104,8 +86,17 @@ func (s *server) runOhter() {
 }
 
 func (s *server) Run(a app.AppInterface) error {
-	if s.conf.App.EtcdOpen != "Off" {
-		if err := resolver.Register(s.conf.Etcd); err != nil {
+	if etcdOpen, err := env.GetBool(APP_ETCD_OPEN); err == nil && etcdOpen {
+		timeout, _ := env.GetInt(ETCD_TIMEOUT)
+		conf := etcd.Config{
+			Endpoints:   strings.Split(os.Getenv(ETCD_ENDPOINTS), ","),
+			DialTimeout: timeout,
+			Username:    os.Getenv(ETCD_USERNAME),
+			Password:    os.Getenv(ETCD_PASSWORD),
+			Namespace:   os.Getenv(ETCD_NAMESPACE),
+		}
+
+		if err := resolver.Register(conf); err != nil {
 			return err
 		}
 	}
@@ -115,8 +106,8 @@ func (s *server) Run(a app.AppInterface) error {
 	s.wait.Add(1)
 	go s.runOhter()
 
-	debug.Info("app[%s] listen on [%s]", a.Name(), s.conf.Listen.Addr())
-	if err := engine.Run(s.conf.Listen.Addr()); err != nil {
+	debug.Info("app[%s] listen on [%s:%s]", a.Name(), os.Getenv(SERV_HOST), os.Getenv(SERV_PORT))
+	if err := engine.Run(fmt.Sprintf("%s:%s", os.Getenv(SERV_HOST), os.Getenv(SERV_PORT))); err != nil {
 		return err
 	}
 	return nil
@@ -137,7 +128,7 @@ func (s *server) Shutdown(a app.AppInterface) error {
 		s.e.OnShutdown()
 	}
 
-	if s.conf.App.EtcdOpen != "Off" {
+	if etcdOpen, err := env.GetBool(APP_ETCD_OPEN); err == nil && etcdOpen {
 		resolver.Shutdown()
 	}
 	s.wait.Wait()

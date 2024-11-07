@@ -13,6 +13,20 @@ import (
 	"github.com/kovey/kow/serv"
 )
 
+const (
+	APP_NAME       = "APP_NAME"
+	APP_TIME_ZONE  = "APP_TIME_ZONE"
+	APP_ETCD_OPEN  = "APP_ETCD_OPEN"
+	APP_PPROF_OPEN = "APP_PPROF_OPEN"
+	SERV_HOST      = "SERV_HOST"
+	SERV_PORT      = "SERV_PORT"
+	ETCD_TIMEOUT   = "ETCD_TIMEOUT"
+	ETCD_USERNAME  = "ETCD_USERNAME"
+	ETCD_PASSWORD  = "ETCD_PASSWORD"
+	ETCD_NAMESPACE = "ETCD_NAMESPACE"
+	ETCD_ENDPOINTS = "ETCD_ENDPOINTS"
+)
+
 func SetMaxRunTime(max time.Duration) {
 	engine.maxRunTime = max
 }
