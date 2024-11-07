@@ -68,7 +68,7 @@ func (s *server) runMonitor() {
 		return
 	}
 
-	s.pprof = &http.Server{Addr: fmt.Sprintf("%s:%d", os.Getenv(SERV_PORT), port+10000), Handler: http.DefaultServeMux}
+	s.pprof = &http.Server{Addr: fmt.Sprintf("%s:%d", os.Getenv(SERV_HOST), port+10000), Handler: http.DefaultServeMux}
 	if err := s.pprof.ListenAndServe(); err != nil {
 		debug.Erro("run pprof failure, error: %s", err)
 	}
