@@ -2,9 +2,11 @@ package kow
 
 import (
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/kovey/cli-go/app"
+	"github.com/kovey/cli-go/env"
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/controller"
@@ -14,7 +16,6 @@ import (
 )
 
 const (
-	APP_NAME       = "APP_NAME"
 	APP_TIME_ZONE  = "APP_TIME_ZONE"
 	APP_ETCD_OPEN  = "APP_ETCD_OPEN"
 	APP_PPROF_OPEN = "APP_PPROF_OPEN"
@@ -67,10 +68,9 @@ func TRACE(path string, ac context.ActionInterface) router.RouterInterface {
 	return engine.DefRouter(http.MethodTrace, path, ac)
 }
 
-func Run(name string, e serv.EventInterface) {
-	cli := app.NewApp(name)
+func Run(e serv.EventInterface) {
+	cli := app.NewApp(os.Getenv(env.APP_NAME))
 	serv := newServer(e)
-	cli.SetDebugLevel(debug.Debug_Info)
 	cli.SetServ(serv)
 	if err := cli.Run(); err != nil {
 		debug.Erro(err.Error())
