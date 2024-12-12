@@ -8,8 +8,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kovey/cli-go/env"
 	"github.com/kovey/kow/encoding/json"
 	"github.com/kovey/kow/encoding/xml"
+	"github.com/kovey/kow/trace"
 
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/discovery/krpc"
@@ -43,6 +45,7 @@ type Context struct {
 	status          int
 	Rpcs            Rpcs
 	data            map[string]any
+	traceId         string
 }
 
 func NewContext(parent context.Context, w http.ResponseWriter, r *http.Request) *Context {
@@ -51,7 +54,16 @@ func NewContext(parent context.Context, w http.ResponseWriter, r *http.Request) 
 	ctx.Context = pc
 	ctx.w = w
 	ctx.Request = r
+	if nodeId, err := env.GetInt("APP_NODE_ID"); err == nil {
+		ctx.traceId = trace.TraceId(int64(nodeId))
+	} else {
+		ctx.traceId = trace.TraceId(1001)
+	}
 	return ctx
+}
+
+func (c *Context) TraceId() string {
+	return c.traceId
 }
 
 func (c *Context) Set(key string, val any) {
@@ -153,6 +165,7 @@ func (c *Context) Reset() {
 	c.middleCount = 0
 	c.status = http.StatusOK
 	c.Context = nil
+	c.traceId = ""
 	if len(c.Rpcs) > 0 {
 		c.Rpcs = make(Rpcs)
 	}

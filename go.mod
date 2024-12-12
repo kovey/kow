@@ -8,7 +8,6 @@ require (
 	github.com/kovey/discovery v0.0.4
 	github.com/kovey/pool v0.0.9
 	google.golang.org/grpc v1.59.0
-	google.golang.org/protobuf v1.31.0
 )
 
 require (
@@ -28,4 +27,5 @@ require (
 	google.golang.org/genproto v0.0.0-20230822172742-b8732ec3820d // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230822172742-b8732ec3820d // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d // indirect
+	google.golang.org/protobuf v1.31.0 // indirect
 )
