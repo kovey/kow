@@ -9,6 +9,7 @@ const (
 	Content_Type_Binary    = "application/octet-stream"
 	Header_X_Real_Ip       = "X-Real-IP"
 	Header_X_Forwarded_For = "X-Forwarded-For"
+	Header_X_Request_Id    = "X-Request-Id"
 )
 
 func IsJson(t string) bool {

@@ -282,6 +282,7 @@ func (c *Context) Binary(status int, data []byte) error {
 func (c *Context) Data(status int, contentType string, data []byte) error {
 	c.Status(status)
 	c.Header(Content_Type_Key, contentType)
+	c.Header(Header_X_Request_Id, c.traceId)
 	c.w.WriteHeader(c.status)
 	_, err := c.w.Write(data)
 	return err
