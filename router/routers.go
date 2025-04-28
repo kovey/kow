@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/kovey/kow/context"
+	"github.com/kovey/kow/middleware"
 )
 
 type Routers struct {
@@ -22,9 +23,6 @@ type Routers struct {
 	globalAllowed          string
 	NotFound               *Chain
 	MethodNotAllowed       *Chain
-	//PanicHandler           *Chain
-	//trustedProxies         []string
-	//trustedCIDRs           []*net.IPNet
 }
 
 func NewRouters() *Routers {
@@ -42,21 +40,8 @@ func (r *Routers) putParams(ps context.Params) {
 }
 
 func (r *Routers) saveMatchedRoutePath(path string, chain *Chain) *Chain {
+	chain.Middlewares = append(chain.Middlewares, middleware.NewSaveMatchedRoute(path))
 	return chain
-	/**
-	return func(w http.ResponseWriter, req *http.Request, ps context.Params) {
-		if ps == nil {
-			psp := r.getParams()
-			psp[MatchedRoutePathParam] = path
-			ps[0] = Param{Key: MatchedRoutePathParam, Value: path}
-			handle(w, req, ps)
-			r.putParams(psp)
-		} else {
-			ps = append(ps, Param{Key: MatchedRoutePathParam, Value: path})
-			handle(w, req, ps)
-		}
-	}
-	**/
 }
 
 func (r *Routers) Handle(method, path string, chain *Chain) {
@@ -161,11 +146,17 @@ func (r *Routers) HandleHTTP(c *context.Context) {
 
 	if root := r.trees[c.Request.Method]; root != nil {
 		if chain, ps, tsr := root.getValue(path, r.getParams); chain != nil {
+			c.Rules = chain.rules
+			c.ReqData = chain.param.Clone()
 			if ps != nil {
 				c.SetParams(ps)
 				chain.handle(c)
 				r.putParams(ps)
 			} else {
+				if r.SaveMatchedRoutePath {
+					tmpPs := make(context.Params)
+					c.SetParams(tmpPs)
+				}
 				chain.handle(c)
 			}
 			return

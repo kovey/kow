@@ -9,4 +9,5 @@ type RouterInterface interface {
 	Path() string
 	Chain() *Chain
 	Middleware(...context.MiddlewareInterface)
+	Rule(key string, rules ...string) RouterInterface
 }

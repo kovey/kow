@@ -11,7 +11,8 @@ import (
 type Codes int32
 
 const (
-	Codes_Succ Codes = 0
+	Codes_Succ           Codes = 0
+	Codes_Invalid_Params Codes = 1000
 )
 
 var succCode Codes = Codes_Succ

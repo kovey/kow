@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/kovey/kow/context"
+	"github.com/kovey/kow/validator"
 )
 
 type Default struct {
@@ -11,7 +12,7 @@ type Default struct {
 }
 
 func NewDefault(m string, p string, a context.ActionInterface) *Default {
-	return &Default{m: m, p: p, chain: &Chain{Action: a}}
+	return &Default{m: m, p: p, chain: &Chain{Action: a, rules: validator.NewParamRules()}}
 }
 
 func (d *Default) Middleware(middlewares ...context.MiddlewareInterface) {
@@ -28,4 +29,9 @@ func (d *Default) Path() string {
 
 func (d *Default) Chain() *Chain {
 	return d.chain
+}
+
+func (d *Default) Rule(key string, rules ...string) RouterInterface {
+	d.chain.rules.Add(key, rules...)
+	return d
 }

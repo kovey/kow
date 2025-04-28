@@ -8,16 +8,16 @@ import (
 	"github.com/kovey/kow/validator/rule"
 )
 
-type paramRules struct {
+type ParamRules struct {
 	rules map[string][]*rule.Rule
 }
 
-func newParamRules() *paramRules {
-	return &paramRules{rules: make(map[string][]*rule.Rule)}
+func NewParamRules() *ParamRules {
+	return &ParamRules{rules: make(map[string][]*rule.Rule)}
 }
 
 // rule: eq:int:1,2
-func (p *paramRules) add(key string, rules ...string) bool {
+func (p *ParamRules) Add(key string, rules ...string) bool {
 	if _, ok := p.rules[key]; ok {
 		return false
 	}
@@ -35,7 +35,7 @@ func (p *paramRules) add(key string, rules ...string) bool {
 	return true
 }
 
-func (p *paramRules) get(key string) []*rule.Rule {
+func (p *ParamRules) Get(key string) []*rule.Rule {
 	if rules, ok := p.rules[key]; ok {
 		return rules
 	}

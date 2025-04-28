@@ -4,6 +4,7 @@ import "fmt"
 
 type ParamInterface interface {
 	ValidParams() map[string]any
+	Clone() ParamInterface
 }
 
 type Rule struct {

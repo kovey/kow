@@ -57,7 +57,7 @@ func (v *Validator) Valid(key string, value any, rules []*rule.Rule, all map[str
 }
 
 var v = NewValidator()
-var r = newParamRules()
+var r = NewParamRules()
 
 func init() {
 	v.Add(rule.NewEq())
@@ -83,16 +83,30 @@ func init() {
 // rule names:
 // eq,eq_feild,ge,gt,le,len,lt,minlen,maxlen,regx,chinese,email,jwt,url
 func RegRule(key string, rules ...string) bool {
-	return r.add(key, rules...)
+	return r.Add(key, rules...)
 }
 
 func Register(r rule.RuleInterface) {
 	v.Add(r)
 }
 
+func V(param rule.ParamInterface, rules *ParamRules) error {
+	if rules == nil {
+		return nil
+	}
+
+	for key, value := range param.ValidParams() {
+		if err := v.Valid(key, value, rules.Get(key), param.ValidParams()); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func Valid(all map[string]any) error {
 	for key, value := range all {
-		if err := v.Valid(key, value, r.get(key), all); err != nil {
+		if err := v.Valid(key, value, r.Get(key), all); err != nil {
 			return err
 		}
 	}

@@ -8,6 +8,12 @@ import (
 
 type Params map[string]string
 
+const MatchedRoutePathParam = "$matchedRoutePath"
+
+func (p Params) MatchedRoutePath() string {
+	return p[MatchedRoutePathParam]
+}
+
 func (p Params) Reset() {
 	for k := range p {
 		delete(p, k)
@@ -20,6 +26,20 @@ func (p Params) GetString(key string) string {
 	}
 
 	return ""
+}
+
+func (p Params) GetInt64(key string) int64 {
+	if val, ok := p[key]; ok {
+		tmp, err := strconv.ParseInt(val, 10, 64)
+		if err != nil {
+			debug.Erro(err.Error())
+			return 0
+		}
+
+		return tmp
+	}
+
+	return 0
 }
 
 func (p Params) GetInt(key string) int {

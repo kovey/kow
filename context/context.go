@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/kovey/cli-go/env"
+	"github.com/kovey/kow/encoding/form"
 	"github.com/kovey/kow/encoding/json"
 	"github.com/kovey/kow/encoding/xml"
 	"github.com/kovey/kow/trace"
@@ -46,6 +47,8 @@ type Context struct {
 	Rpcs            Rpcs
 	data            map[string]any
 	traceId         string
+	ReqData         rule.ParamInterface
+	Rules           *validator.ParamRules
 }
 
 func NewContext(parent context.Context, w http.ResponseWriter, r *http.Request) *Context {
@@ -166,6 +169,8 @@ func (c *Context) Reset() {
 	c.status = http.StatusOK
 	c.Context = nil
 	c.traceId = ""
+	c.ReqData = nil
+	c.Rules = nil
 	if len(c.Rpcs) > 0 {
 		c.Rpcs = make(Rpcs)
 	}
@@ -244,6 +249,15 @@ func (c *Context) Json(status int, data any) error {
 	return c.Data(status, Content_Type_Json, content)
 }
 
+func (c *Context) Form(status int, data any) error {
+	content, err := form.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	return c.Data(status, Content_Type_Form, content)
+}
+
 func (c *Context) Html(status int, data Data) error {
 	if status >= 400 {
 		return c.Data(status, Content_Type_Html, []byte(http.StatusText(status)))
@@ -293,17 +307,21 @@ func (c *Context) Raw() ([]byte, error) {
 	return io.ReadAll(c.Request.Body)
 }
 
+func (c *Context) ParseForm(data rule.ParamInterface) error {
+	if err := c.Request.ParseForm(); err != nil {
+		return err
+	}
+
+	return form.Unmarshal(c.Request.Form, data)
+}
+
 func (c *Context) ParseJson(data rule.ParamInterface) error {
 	content, err := c.Raw()
 	if err != nil {
 		return err
 	}
 
-	if err := json.Unmarshal(content, data); err != nil {
-		return err
-	}
-
-	return validator.Valid(data.ValidParams())
+	return json.Unmarshal(content, data)
 }
 
 func (c *Context) ParseXml(data rule.ParamInterface) error {
@@ -312,11 +330,7 @@ func (c *Context) ParseXml(data rule.ParamInterface) error {
 		return err
 	}
 
-	if err := xml.Unmarshal(content, data); err != nil {
-		return err
-	}
-
-	return validator.Valid(data.ValidParams())
+	return xml.Unmarshal(content, data)
 }
 
 func (c *Context) ClientIp() string {

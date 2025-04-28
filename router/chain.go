@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/kovey/kow/context"
+	"github.com/kovey/kow/validator"
+	"github.com/kovey/kow/validator/rule"
 )
 
 type Chain struct {
@@ -11,6 +13,8 @@ type Chain struct {
 	Action      context.ActionInterface
 	isFile      bool
 	fileServer  http.Handler
+	rules       *validator.ParamRules
+	param       rule.ParamInterface
 }
 
 func (c *Chain) handle(ct *context.Context) {

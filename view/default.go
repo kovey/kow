@@ -20,7 +20,7 @@ func (d *Default) Data(data any) {
 }
 
 func (d *Default) Load(path string) error {
-	tpl, err := template.ParseGlob(path)
+	tpl, err := template.ParseFiles(path)
 	if err != nil {
 		return err
 	}

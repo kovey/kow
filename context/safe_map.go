@@ -37,6 +37,13 @@ func (s *SafeMap[K, V]) Rem(key K) {
 	s.locker.Unlock()
 }
 
+func (s *SafeMap[K, V]) Exists(key K) bool {
+	s.locker.RLock()
+	defer s.locker.RUnlock()
+	_, ok := s.data[key]
+	return ok
+}
+
 func (s *SafeMap[K, V]) Len() int {
 	s.locker.RLock()
 	defer s.locker.RUnlock()
@@ -44,7 +51,7 @@ func (s *SafeMap[K, V]) Len() int {
 	return len(s.data)
 }
 
-func (s *SafeMap[K, V]) For(f func(key K, val V) bool) {
+func (s *SafeMap[K, V]) Range(f func(key K, val V) bool) {
 	s.locker.RLock()
 	tmp := make(map[K]V, len(s.data))
 	for key, val := range s.data {
