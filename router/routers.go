@@ -146,8 +146,6 @@ func (r *Routers) HandleHTTP(c *context.Context) {
 
 	if root := r.trees[c.Request.Method]; root != nil {
 		if chain, ps, tsr := root.getValue(path, r.getParams); chain != nil {
-			c.Rules = chain.rules
-			c.ReqData = chain.param.Clone()
 			if ps != nil {
 				c.SetParams(ps)
 				chain.handle(c)
@@ -233,7 +231,7 @@ func (r *Routers) ServeFiles(path string, root http.FileSystem, chain *Chain) {
 		panic("path must end with /*filepath in path '" + path + "'")
 	}
 
-	chain.fileServer = http.FileServer(root)
+	chain.SetFileServer(http.FileServer(root))
 	r.Handle(http.MethodGet, path, chain)
 }
 

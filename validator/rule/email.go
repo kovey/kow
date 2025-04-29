@@ -33,5 +33,8 @@ func (e *Email) Valid(key string, val any, params ...any) bool {
 		return false
 	}
 
+	if !ok {
+		e.err = fmt.Errorf("value[%s] of field[%s] is not email", tmp, key)
+	}
 	return ok
 }

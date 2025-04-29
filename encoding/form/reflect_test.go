@@ -131,5 +131,5 @@ func TestMarshal(t *testing.T) {
 
 	buf, err := Marshal(tData)
 	assert.Nil(t, err)
-	assert.Equal(t, "name=kovey&id=1&sex=1&age=18&chips=100&td_count=10000&uid[]=1&usex[]=1&uage[]=18&uchips[]=100&utd_count[]=10000&bool[]=true&float32[]=10000.11035&float64[]=10000.11&date=2025-04-11 11:11:11", string(buf))
+	assert.Equal(t, "name=kovey&id=1&sex=1&age=18&chips=100&td_count=10000&uid=1&usex=1&uage=18&uchips=100&utd_count=10000&bool=true&float32=10000.11035&float64=10000.11&date=2025-04-11 11:11:11", string(buf))
 }

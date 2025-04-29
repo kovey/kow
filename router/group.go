@@ -67,8 +67,14 @@ func (g *Group) TRACE(path string, ac context.ActionInterface) RouterInterface {
 }
 
 func (g *Group) DefRouter(method string, path string, ac context.ActionInterface) RouterInterface {
-	ro := NewDefault(method, fmt.Sprintf("%s/%s", g.path, path), ac)
+	ro := NewDefault(method, fmt.Sprintf("/%s/%s", g.path, path), ac)
 	ro.Middleware(g.middlewares...)
 	g.routers.Add(ro)
 	return ro
+}
+
+func (g *Group) Group(path string) *Group {
+	other := NewGroup(fmt.Sprintf("%s/%s", g.path, path), g.routers)
+	other.Middleware(g.middlewares...)
+	return other
 }

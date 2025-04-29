@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/validator"
+	"github.com/kovey/kow/validator/rule"
 )
 
 type Default struct {
@@ -33,5 +34,10 @@ func (d *Default) Chain() *Chain {
 
 func (d *Default) Rule(key string, rules ...string) RouterInterface {
 	d.chain.rules.Add(key, rules...)
+	return d
+}
+
+func (d *Default) Data(data rule.ParamInterface) RouterInterface {
+	d.chain.param = data
 	return d
 }

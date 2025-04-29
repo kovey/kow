@@ -33,5 +33,9 @@ func (e *Domain) Valid(key string, val any, params ...any) bool {
 		return false
 	}
 
+	if !ok {
+		e.err = fmt.Errorf("value[%s] of field[%s] is not domain", tmp, key)
+	}
+
 	return ok
 }

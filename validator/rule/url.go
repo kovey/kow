@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/kovey/debug-go/debug"
@@ -28,7 +29,12 @@ func (u *Url) Valid(key string, val any, params ...any) bool {
 	ok, err := regexp.Match(url_reg, []byte(tmp))
 	if err != nil {
 		debug.Erro("regexp matched failure in url, error: %s", err)
+		u.err = fmt.Errorf("value[%s] of field[%s] is not url", tmp, key)
 		return false
+	}
+
+	if !ok {
+		u.err = fmt.Errorf("value[%s] of field[%s] is not url", tmp, key)
 	}
 
 	return ok

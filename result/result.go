@@ -24,6 +24,18 @@ func SetSuccCode(code Codes) {
 type Empty struct {
 }
 
+func SuccForm(ctx *context.Context, data any) error {
+	return ctx.Form(http.StatusOK, data)
+}
+
+func SuccFormEmpty(ctx *context.Context) error {
+	return SuccForm(ctx, Empty{})
+}
+
+func ErrForm(ctx *context.Context, code Codes, msg string) error {
+	return ctx.Form(http.StatusOK, ResponseErrForm{Code: code, Msg: msg})
+}
+
 func Succ(ctx *context.Context, data any) error {
 	return ctx.Json(http.StatusOK, Response{Code: succCode, Data: data})
 }
@@ -34,6 +46,18 @@ func SuccEmpty(ctx *context.Context) error {
 
 func Err(ctx *context.Context, code Codes, msg string) error {
 	return ctx.Json(http.StatusOK, Response{Code: code, Msg: msg, Data: Empty{}})
+}
+
+func SuccXml(ctx *context.Context, data any) error {
+	return ctx.Xml(http.StatusOK, Response{Code: succCode, Data: data})
+}
+
+func SuccXmlEmpty(ctx *context.Context) error {
+	return SuccXml(ctx, Empty{})
+}
+
+func ErrXml(ctx *context.Context, code Codes, msg string) error {
+	return ctx.Xml(http.StatusOK, Response{Code: code, Msg: msg, Data: Empty{}})
 }
 
 func Timeout(ctx *context.Context) error {

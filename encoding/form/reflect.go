@@ -292,12 +292,18 @@ func (f *Reflect) Parse(data map[string][]string, val any) error {
 func (f *Reflect) Encode(val any) ([]byte, error) {
 	var builder strings.Builder
 	vVal := reflect.ValueOf(val)
+	if vVal.Kind() == reflect.Pointer {
+		vVal = vVal.Elem()
+	}
 	for i := 0; i < f.Type.NumField(); i++ {
 		if i > 0 {
 			builder.WriteString("&")
 		}
 		field := f.Type.Field(i)
 		name := field.Tag.Get(form_tag)
+		if name == "" {
+			name = field.Name
+		}
 		vField := vVal.Field(i)
 		switch field.Type.Kind() {
 		case reflect.Struct:
@@ -308,183 +314,65 @@ func (f *Reflect) Encode(val any) ([]byte, error) {
 				builder.WriteString(data.Format(time.DateTime))
 			}
 		case reflect.String:
-			data := vField.Interface().(string)
 			builder.WriteString(name)
 			builder.WriteString("=")
-			builder.WriteString(data)
-		case reflect.Int:
-			data := vField.Interface().(int)
+			builder.WriteString(vField.String())
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 			builder.WriteString(name)
 			builder.WriteString("=")
-			builder.WriteString(strconv.Itoa(data))
-		case reflect.Int8:
-			data := vField.Interface().(int8)
+			builder.WriteString(strconv.FormatInt(vField.Int(), 10))
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 			builder.WriteString(name)
 			builder.WriteString("=")
-			builder.WriteString(strconv.Itoa(int(data)))
-		case reflect.Int16:
-			data := vField.Interface().(int16)
-			builder.WriteString(name)
-			builder.WriteString("=")
-			builder.WriteString(strconv.Itoa(int(data)))
-		case reflect.Int32:
-			data := vField.Interface().(int32)
-			builder.WriteString(name)
-			builder.WriteString("=")
-			builder.WriteString(strconv.Itoa(int(data)))
-		case reflect.Int64:
-			data := vField.Interface().(int64)
-			builder.WriteString(name)
-			builder.WriteString("=")
-			builder.WriteString(strconv.Itoa(int(data)))
-		case reflect.Uint:
-			data := vField.Interface().(uint)
-			builder.WriteString(name)
-			builder.WriteString("[]=")
-			builder.WriteString(strconv.FormatUint(uint64(data), 10))
-		case reflect.Uint8:
-			data := vField.Interface().(uint8)
-			builder.WriteString(name)
-			builder.WriteString("[]=")
-			builder.WriteString(strconv.Itoa(int(data)))
-		case reflect.Uint16:
-			data := vField.Interface().(uint16)
-			builder.WriteString(name)
-			builder.WriteString("[]=")
-			builder.WriteString(strconv.Itoa(int(data)))
-		case reflect.Uint32:
-			data := vField.Interface().(uint32)
-			builder.WriteString(name)
-			builder.WriteString("[]=")
-			builder.WriteString(strconv.Itoa(int(data)))
-		case reflect.Uint64:
-			data := vField.Interface().(uint64)
-			builder.WriteString(name)
-			builder.WriteString("[]=")
-			builder.WriteString(strconv.FormatUint(data, 10))
+			builder.WriteString(strconv.FormatUint(vField.Uint(), 10))
 		case reflect.Bool:
-			data := vField.Interface().(bool)
 			builder.WriteString(name)
-			builder.WriteString("[]=")
-			builder.WriteString(strconv.FormatBool(data))
-		case reflect.Float32:
-			data := vField.Interface().(float32)
+			builder.WriteString("=")
+			builder.WriteString(strconv.FormatBool(vField.Bool()))
+		case reflect.Float32, reflect.Float64:
 			builder.WriteString(name)
-			builder.WriteString("[]=")
-			builder.WriteString(strconv.FormatFloat(float64(data), 'g', 10, 64))
-		case reflect.Float64:
-			data := vField.Interface().(float64)
-			builder.WriteString(name)
-			builder.WriteString("[]=")
-			builder.WriteString(strconv.FormatFloat(data, 'g', 10, 64))
+			builder.WriteString("=")
+			builder.WriteString(strconv.FormatFloat(vField.Float(), 'g', 10, 64))
 		case reflect.Array, reflect.Slice:
 			switch field.Type.Elem().Kind() {
 			case reflect.Struct:
-				datas, ok := vField.Interface().([]time.Time)
-				if ok {
-					for _, data := range datas {
+				for i := 0; i < vField.Len(); i++ {
+					data, ok := vField.Index(i).Interface().(time.Time)
+					if ok {
 						builder.WriteString(name)
 						builder.WriteString("[]=")
 						builder.WriteString(data.Format(time.DateTime))
 					}
 				}
 			case reflect.String:
-				datas := vField.Interface().([]string)
-				for _, data := range datas {
+				for i := 0; i < vField.Len(); i++ {
 					builder.WriteString(name)
 					builder.WriteString("[]=")
-					builder.WriteString(data)
+					builder.WriteString(vField.Index(i).String())
 				}
-			case reflect.Int:
-				datas := vField.Interface().([]int)
-				for _, data := range datas {
+			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+				for i := 0; i < vField.Len(); i++ {
 					builder.WriteString(name)
 					builder.WriteString("[]=")
-					builder.WriteString(strconv.Itoa(data))
+					builder.WriteString(strconv.FormatInt(vField.Index(i).Int(), 10))
 				}
-			case reflect.Int8:
-				datas := vField.Interface().([]int8)
-				for _, data := range datas {
+			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+				for i := 0; i < vField.Len(); i++ {
 					builder.WriteString(name)
 					builder.WriteString("[]=")
-					builder.WriteString(strconv.Itoa(int(data)))
-				}
-			case reflect.Int16:
-				datas := vField.Interface().([]int16)
-				for _, data := range datas {
-					builder.WriteString(name)
-					builder.WriteString("[]=")
-					builder.WriteString(strconv.Itoa(int(data)))
-				}
-			case reflect.Int32:
-				datas := vField.Interface().([]int32)
-				for _, data := range datas {
-					builder.WriteString(name)
-					builder.WriteString("[]=")
-					builder.WriteString(strconv.Itoa(int(data)))
-				}
-			case reflect.Int64:
-				datas := vField.Interface().([]int64)
-				for _, data := range datas {
-					builder.WriteString(name)
-					builder.WriteString("[]=")
-					builder.WriteString(strconv.Itoa(int(data)))
-				}
-			case reflect.Uint:
-				datas := vField.Interface().([]uint)
-				for _, data := range datas {
-					builder.WriteString(name)
-					builder.WriteString("[]=")
-					builder.WriteString(strconv.FormatUint(uint64(data), 10))
-				}
-			case reflect.Uint8:
-				datas := vField.Interface().([]uint8)
-				for _, data := range datas {
-					builder.WriteString(name)
-					builder.WriteString("[]=")
-					builder.WriteString(strconv.Itoa(int(data)))
-				}
-			case reflect.Uint16:
-				datas := vField.Interface().([]uint16)
-				for _, data := range datas {
-					builder.WriteString(name)
-					builder.WriteString("[]=")
-					builder.WriteString(strconv.Itoa(int(data)))
-				}
-			case reflect.Uint32:
-				datas := vField.Interface().([]uint32)
-				for _, data := range datas {
-					builder.WriteString(name)
-					builder.WriteString("[]=")
-					builder.WriteString(strconv.Itoa(int(data)))
-				}
-			case reflect.Uint64:
-				datas := vField.Interface().([]uint64)
-				for _, data := range datas {
-					builder.WriteString(name)
-					builder.WriteString("[]=")
-					builder.WriteString(strconv.FormatUint(data, 10))
+					builder.WriteString(strconv.FormatUint(vField.Index(i).Uint(), 10))
 				}
 			case reflect.Bool:
-				datas := vField.Interface().([]bool)
-				for _, data := range datas {
+				for i := 0; i < vField.Len(); i++ {
 					builder.WriteString(name)
 					builder.WriteString("[]=")
-					builder.WriteString(strconv.FormatBool(data))
+					builder.WriteString(strconv.FormatBool(vField.Index(i).Bool()))
 				}
-			case reflect.Float32:
-				datas := vField.Interface().([]float32)
-				for _, data := range datas {
+			case reflect.Float32, reflect.Float64:
+				for i := 0; i < vField.Len(); i++ {
 					builder.WriteString(name)
 					builder.WriteString("[]=")
-					builder.WriteString(strconv.FormatFloat(float64(data), 'g', 10, 64))
-				}
-			case reflect.Float64:
-				datas := vField.Interface().([]float64)
-				for _, data := range datas {
-					builder.WriteString(name)
-					builder.WriteString("[]=")
-					builder.WriteString(strconv.FormatFloat(data, 'g', 10, 64))
+					builder.WriteString(strconv.FormatFloat(vField.Index(i).Float(), 'g', 10, 64))
 				}
 			}
 		}

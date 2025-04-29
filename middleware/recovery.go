@@ -11,11 +11,20 @@ import (
 )
 
 type Recovery struct {
+	CallerStart int
+}
+
+func (r *Recovery) callerStart() int {
+	if r.CallerStart > 0 {
+		return r.CallerStart
+	}
+
+	return 3
 }
 
 func (r *Recovery) stack() string {
 	res := make([]string, 0)
-	for i := 5; ; i++ {
+	for i := r.callerStart(); ; i++ {
 		_, file, line, ok := runtime.Caller(i)
 		if !ok {
 			break

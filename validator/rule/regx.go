@@ -43,5 +43,9 @@ func (r *Regx) Valid(key string, val any, params ...any) bool {
 		return false
 	}
 
+	if !ok {
+		r.err = fmt.Errorf("value[%s] of field[%s] regx pattern[%v] failure", tmp, key, params[0])
+	}
+
 	return ok
 }

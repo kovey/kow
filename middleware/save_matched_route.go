@@ -11,6 +11,9 @@ func NewSaveMatchedRoute(path string) *SaveMatchedRoute {
 }
 
 func (s *SaveMatchedRoute) Handle(ctx *context.Context) {
+	if ctx.Params == nil {
+		ctx.Params = context.Params{}
+	}
 	ctx.Params[context.MatchedRoutePathParam] = s.path
 	ctx.Next()
 }

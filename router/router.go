@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/kovey/kow/context"
+	"github.com/kovey/kow/validator/rule"
 )
 
 type RouterInterface interface {
@@ -10,4 +11,5 @@ type RouterInterface interface {
 	Chain() *Chain
 	Middleware(...context.MiddlewareInterface)
 	Rule(key string, rules ...string) RouterInterface
+	Data(data rule.ParamInterface) RouterInterface
 }

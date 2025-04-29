@@ -33,5 +33,9 @@ func (c *Chinese) Valid(key string, val any, params ...any) bool {
 		return false
 	}
 
+	if !ok {
+		c.err = fmt.Errorf("value[%s] of field[%s] is not chinese", tmp, key)
+	}
+
 	return ok
 }
