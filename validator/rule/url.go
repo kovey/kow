@@ -20,22 +20,21 @@ func NewUrl() *Url {
 	return &Url{NewBase(rule_url, nil)}
 }
 
-func (u *Url) Valid(key string, val any, params ...any) bool {
+func (u *Url) Valid(key string, val any, params ...any) (bool, error) {
 	tmp, ok := val.(string)
 	if !ok {
-		return false
+		return false, fmt.Errorf("value[%v] of field[%s] not string", val, key)
 	}
 
 	ok, err := regexp.Match(url_reg, []byte(tmp))
 	if err != nil {
 		debug.Erro("regexp matched failure in url, error: %s", err)
-		u.err = fmt.Errorf("value[%s] of field[%s] is not url", tmp, key)
-		return false
+		return false, fmt.Errorf("value[%s] of field[%s] is not url", tmp, key)
 	}
 
 	if !ok {
-		u.err = fmt.Errorf("value[%s] of field[%s] is not url", tmp, key)
+		return ok, fmt.Errorf("value[%s] of field[%s] is not url", tmp, key)
 	}
 
-	return ok
+	return ok, nil
 }

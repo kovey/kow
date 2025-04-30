@@ -1,16 +1,20 @@
 package rule
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestMaxLen(t *testing.T) {
 	m := NewMaxLen()
-	if !m.Valid("test", "test", 5) {
-		t.Fatal("test failure")
-	}
-	if !m.Valid("test", "test", 4) {
-		t.Fatal("test failure")
-	}
-	if m.Valid("test", "test", 3) {
-		t.Fatal("test failure")
-	}
+	ok, err := m.Valid("test", "test", 5)
+	assert.True(t, ok)
+	assert.Nil(t, err)
+	ok, err = m.Valid("test", "test", 4)
+	assert.True(t, ok)
+	assert.Nil(t, err)
+	ok, err = m.Valid("test", "test", 3)
+	assert.False(t, ok)
+	assert.NotNil(t, err)
 }

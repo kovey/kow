@@ -20,25 +20,27 @@ func NewJwt() *Jwt {
 	return &Jwt{NewBase(rule_jwt, nil)}
 }
 
-func (j *Jwt) Valid(key string, val any, params ...any) bool {
+func (j *Jwt) Valid(key string, val any, params ...any) (bool, error) {
 	tmp, ok := val.(string)
 	if !ok {
-		return false
+		if j.err != nil {
+			return false, j.err
+		}
+
+		return false, fmt.Errorf("val is not string")
 	}
 
 	info := strings.Split(tmp, ".")
 	if len(info) != 3 {
-		j.err = fmt.Errorf("value[%s] of field[%s] is not jwt", tmp, key)
-		return false
+		return false, fmt.Errorf("value[%s] of field[%s] is not jwt", tmp, key)
 	}
 
 	for _, str := range info {
 		if _, err := base64.RawURLEncoding.DecodeString(str); err != nil {
 			debug.Erro("jwt valid failure, error: %s", err)
-			j.err = fmt.Errorf("value[%s] of field[%s] is not jwt", tmp, key)
-			return false
+			return false, fmt.Errorf("value[%s] of field[%s] is not jwt", tmp, key)
 		}
 	}
 
-	return true
+	return true, nil
 }

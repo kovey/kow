@@ -37,17 +37,20 @@ func (v *Validator) Valid(key string, value any, rules []*rule.Rule, all map[str
 			if !ok {
 				return fmt.Errorf("param[%s] valid with[%s] failure, field[%s] not found", key, rule.Func, kk)
 			}
-			if valid.Valid(key, value, val) {
+			ok, err := valid.Valid(key, value, val)
+			if ok {
 				continue
 			}
-		} else {
-			if valid.Valid(key, value, rule.Params...) {
-				continue
-			}
-		}
-
-		if err := valid.Err(); err != nil {
 			return err
+		} else {
+			ok, err := valid.Valid(key, value, rule.Params...)
+			if ok {
+				continue
+			}
+
+			if err != nil {
+				return err
+			}
 		}
 
 		return fmt.Errorf("param[%s] valid with[%s] failure", key, rule.Func)

@@ -14,15 +14,14 @@ func NewEq() *Eq {
 	return &Eq{Base: NewBase(rule_eq, nil)}
 }
 
-func (g *Eq) Valid(key string, val any, params ...any) bool {
+func (g *Eq) Valid(key string, val any, params ...any) (bool, error) {
 	if len(params) != 1 {
-		g.err = fmt.Errorf("params: %+v format error", params)
-		return false
+		return false, fmt.Errorf("params: %+v format error", params)
 	}
 
 	res := val == params[0]
 	if !res {
-		g.err = fmt.Errorf("value[%v] of field[%s] not equal give[%v]", val, key, params[0])
+		return res, fmt.Errorf("value[%v] of field[%s] not equal give[%v]", val, key, params[0])
 	}
-	return res
+	return res, nil
 }

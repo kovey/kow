@@ -1,19 +1,23 @@
 package rule
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestGet(t *testing.T) {
 	ge := NewGe()
-	if ge.Valid("test", 1) {
-		t.Fatalf("test failure")
-	}
-	if !ge.Valid("test", 1, 1) {
-		t.Fatalf("test failure")
-	}
-	if !ge.Valid("test", 2.2, 1.1) {
-		t.Fatalf("test failure")
-	}
-	if ge.Valid("test", 1, 2) {
-		t.Fatalf("test failure")
-	}
+	ok, err := ge.Valid("test", 1)
+	assert.False(t, ok)
+	assert.NotNil(t, err)
+	ok, err = ge.Valid("test", 1, 1)
+	assert.True(t, ok)
+	assert.Nil(t, err)
+	ok, err = ge.Valid("test", 2.2, 1.1)
+	assert.True(t, ok)
+	assert.Nil(t, err)
+	ok, err = ge.Valid("test", 1, 2)
+	assert.False(t, ok)
+	assert.NotNil(t, err)
 }

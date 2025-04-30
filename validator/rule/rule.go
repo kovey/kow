@@ -18,7 +18,7 @@ func NewRule(f string, params []any) *Rule {
 
 type RuleInterface interface {
 	Name() string
-	Valid(key string, val any, params ...any) bool
+	Valid(key string, val any, params ...any) (bool, error)
 	Err() error
 }
 

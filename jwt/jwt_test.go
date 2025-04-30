@@ -1,8 +1,10 @@
 package jwt
 
 import (
-	"fmt"
+	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type Ext struct {
@@ -18,11 +20,9 @@ func TestEncode(t *testing.T) {
 	ext.UserId = 1
 	ext.Name = "aaa"
 	tk, err := jwt.Encode(ext)
-	if err != nil {
-		t.Fatalf("decode failure: %s", err)
-	}
-
-	fmt.Println("token: ", tk)
+	assert.Nil(t, err)
+	assert.True(t, len(strings.Split(tk, ".")) == 3)
 	ex, err := jwt.Decode(tk)
-	fmt.Printf("ex: %+v, err: %s\n", ex, err)
+	assert.Nil(t, err)
+	assert.Equal(t, ext, ex)
 }

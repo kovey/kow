@@ -26,6 +26,7 @@ func (p *ParamRules) Add(key string, rules ...string) bool {
 	for i, r := range rules {
 		rr := parseRule(r)
 		if rr == nil {
+			delete(p.rules, key)
 			return false
 		}
 

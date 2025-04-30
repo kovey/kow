@@ -24,8 +24,10 @@ func NewEngine() *Engine {
 
 func NewDefault() *Engine {
 	e := NewEngine()
-	e.Middleware(&middleware.Logger{}, &middleware.Recovery{})
+	e.Middleware(&middleware.Logger{}, &middleware.Recovery{}, middleware.NewParseRequestData(), middleware.NewValidator())
 	e.routers.NotFound = &router.Chain{Action: controller.NewNotFound()}
+	e.routers.GlobalOPTIONS = &router.Chain{Action: controller.NewOptions()}
+	e.routers.HandleOPTIONS = true
 	return e
 }
 

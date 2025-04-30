@@ -1,15 +1,16 @@
 package trace
 
 import (
-	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTrace(t *testing.T) {
-	// data := time.Now().UnixNano()
 	data := int64(0)
 	en := Encode(data)
 	de := Decode(en)
-	fmt.Println("data:", data, "encode:", string(en), "decode:", de)
-	fmt.Println("trace:", TraceId(10000000000000))
+	assert.Equal(t, "A-A", string(en))
+	assert.Equal(t, int64(0), de)
+	assert.True(t, len(TraceId(10000000000000)) > 0)
 }

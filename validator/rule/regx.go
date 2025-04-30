@@ -19,33 +19,30 @@ func NewRegx() *Regx {
 	return &Regx{Base: NewBase(rule_regx, nil)}
 }
 
-func (r *Regx) Valid(key string, val any, params ...any) bool {
+func (r *Regx) Valid(key string, val any, params ...any) (bool, error) {
 	if len(params) != 1 {
-		r.err = fmt.Errorf("params: %+v format error", params)
-		return false
+		return false, fmt.Errorf("params: %+v format error", params)
 	}
 
 	tmp, ok := val.(string)
 	if !ok {
-		r.err = fmt.Errorf("val: %v not string", val)
-		return false
+		return false, fmt.Errorf("val: %v not string", val)
 	}
 	pattern, ok := params[0].(string)
 	if !ok {
-		r.err = fmt.Errorf("pattern: %v not string", params[0])
-		return false
+		return false, fmt.Errorf("pattern: %v not string", params[0])
 	}
 
 	ok, err := regexp.Match(pattern, []byte(tmp))
 	if err != nil {
 		debug.Erro("regexp matched failure, error: %s", err)
 		r.err = err
-		return false
+		return false, err
 	}
 
 	if !ok {
-		r.err = fmt.Errorf("value[%s] of field[%s] regx pattern[%v] failure", tmp, key, params[0])
+		return false, fmt.Errorf("value[%s] of field[%s] regx pattern[%v] failure", tmp, key, params[0])
 	}
 
-	return ok
+	return ok, nil
 }
