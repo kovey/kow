@@ -68,6 +68,10 @@ func TRACE(path string, ac context.ActionInterface) router.RouterInterface {
 	return engine.DefRouter(http.MethodTrace, path, ac)
 }
 
+func Group(path string) *router.Group {
+	return engine.Group(path)
+}
+
 func Run(e serv.EventInterface) {
 	cli := app.NewApp(os.Getenv(env.APP_NAME))
 	serv := newServer(e)
