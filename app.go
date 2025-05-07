@@ -29,7 +29,7 @@ const (
 )
 
 func SetMaxRunTime(max time.Duration) {
-	engine.maxRunTime = max
+	engine.SetMaxRunTime(max)
 }
 
 func GET(path string, ac context.ActionInterface) router.RouterInterface {

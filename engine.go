@@ -90,7 +90,11 @@ func (e *Engine) Middleware(middlewars ...context.MiddlewareInterface) {
 }
 
 func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	parent, cancel := cc.WithTimeout(r.Context(), e.maxRunTime)
+	maxRunTime := e.maxRunTime
+	if maxRunTime <= 0 {
+		maxRunTime = 60 * time.Second
+	}
+	parent, cancel := cc.WithTimeout(r.Context(), maxRunTime)
 	ctx := context.NewContext(parent, w, r)
 	defer ctx.Drop()
 	defer cancel()

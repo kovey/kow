@@ -7,10 +7,12 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/discovery/krpc"
 	"github.com/kovey/kow/context"
+	"github.com/kovey/kow/controller"
 	"github.com/kovey/kow/validator/rule"
 	"github.com/kovey/kow/view"
 	"github.com/stretchr/testify/assert"
@@ -87,6 +89,7 @@ func (r *req_data) Clone() rule.ParamInterface {
 
 func TestAppGet(t *testing.T) {
 	debug.SetLevel(debug.Debug_None)
+	OpenCors("Access-Token")
 	Middleware(&test_middle{})
 	GET("/user/get", newTestAction()).Data(&req_data{})
 	w := httptest.NewRecorder()
@@ -97,6 +100,8 @@ func TestAppGet(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
+	assert.Equal(t, "*", result.Header.Get("Access-Control-Allow-Origin"))
+	assert.Equal(t, "content-type,Access-Token", result.Header.Get("Access-Control-Allow-Headers"))
 	defer result.Body.Close()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
@@ -105,11 +110,10 @@ func TestAppGet(t *testing.T) {
 
 func TestAppPost(t *testing.T) {
 	POST("/user/post", newTestAction()).Data(&req_data{})
+	SetMaxRunTime(10 * time.Second)
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodPost, "/user/post", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -126,8 +130,6 @@ func TestAppPut(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodPut, "/user/put", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -144,8 +146,6 @@ func TestAppPatch(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodPatch, "/user/patch", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -162,8 +162,6 @@ func TestAppHead(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodHead, "/user/head", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -180,8 +178,6 @@ func TestAppDelete(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodDelete, "/user/delete", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -198,8 +194,6 @@ func TestAppConnect(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodConnect, "/user/connect", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -209,6 +203,39 @@ func TestAppConnect(t *testing.T) {
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
+}
+
+func TestAppGlobalOptions(t *testing.T) {
+	GET("/user/options", newTestAction()).Data(&req_data{})
+	w := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodOptions, "/user/options", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
+	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
+	SetGlobalOPTIONS(controller.NewOptions())
+	engine.ServeHTTP(w, request)
+	result := w.Result()
+	assert.Equal(t, "202 Accepted", result.Status)
+	assert.Equal(t, 202, result.StatusCode)
+	assert.Equal(t, "text/html", result.Header.Get("Content-Type"))
+	defer result.Body.Close()
+	body, err := io.ReadAll(result.Body)
+	assert.Nil(t, err)
+	assert.Equal(t, "", string(body))
+}
+
+func TestAppGlobalNotFound(t *testing.T) {
+	w := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodPost, "/user/get_info", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
+	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
+	SetNotFound(controller.NewNotFound())
+	engine.ServeHTTP(w, request)
+	result := w.Result()
+	assert.Equal(t, "404 Not Found", result.Status)
+	assert.Equal(t, 404, result.StatusCode)
+	assert.Equal(t, "text/plain; charset=utf-8", result.Header.Get("Content-Type"))
+	defer result.Body.Close()
+	body, err := io.ReadAll(result.Body)
+	assert.Nil(t, err)
+	assert.Equal(t, "404 page not found\n", string(body))
 }
 
 func TestAppOptions(t *testing.T) {
