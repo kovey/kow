@@ -16,8 +16,9 @@ func NewDefault(m string, p string, a context.ActionInterface) *Default {
 	return &Default{m: m, p: p, chain: &Chain{Action: a, rules: validator.NewParamRules()}}
 }
 
-func (d *Default) Middleware(middlewares ...context.MiddlewareInterface) {
+func (d *Default) Middleware(middlewares ...context.MiddlewareInterface) RouterInterface {
 	d.chain.Middlewares = append(d.chain.Middlewares, middlewares...)
+	return d
 }
 
 func (d *Default) Method() string {
