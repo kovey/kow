@@ -93,7 +93,7 @@ func TestAppGet(t *testing.T) {
 	Middleware(&test_middle{})
 	GET("/user/get", newTestAction()).Data(&req_data{})
 	w := httptest.NewRecorder()
-	request := httptest.NewRequest(http.MethodGet, "/user/get", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
+	request := httptest.NewRequest(http.MethodGet, "/user/get?email=kovey@kovey.com&password=123456&age=18", nil)
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
 	engine.ServeHTTP(w, request)
 	result := w.Result()
