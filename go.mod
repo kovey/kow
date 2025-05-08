@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/kovey/cli-go v1.1.9
 	github.com/kovey/debug-go v0.0.5
-	github.com/kovey/discovery v0.0.4
+	github.com/kovey/discovery v0.0.5
 	github.com/kovey/pool v0.0.9
 	github.com/stretchr/testify v1.8.1
 	google.golang.org/grpc v1.59.0
