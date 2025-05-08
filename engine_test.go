@@ -16,9 +16,9 @@ import (
 func TestEngineGet(t *testing.T) {
 	debug.SetLevel(debug.Debug_None)
 	Middleware(&test_middle{})
-	engine.GET("/users/get", newTestAction()).Data(&req_data{})
+	engine.GET("/users/get", newTestAction()).Data(&req_data{}).Rule("age", "gt:int:0", "le:int:120").Rule("password", "maxlen:int:20", "minlen:int:6").Rule("email", "maxlen:int:128", "email")
 	w := httptest.NewRecorder()
-	request := httptest.NewRequest(http.MethodGet, "/users/get", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
+	request := httptest.NewRequest(http.MethodGet, "/users/get?email=kovey@kovey.com&password=123456&age=18", nil)
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
 	engine.ServeHTTP(w, request)
 	result := w.Result()

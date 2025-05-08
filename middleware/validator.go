@@ -36,6 +36,10 @@ func (s *Validator) Handle(ctx *context.Context) {
 			if err := result.ErrXml(ctx, result.Codes_Invalid_Params, err.Error()); err != nil {
 				debug.Erro("%s\n", err)
 			}
+		default:
+			if err := result.Err(ctx, result.Codes_Invalid_Params, err.Error()); err != nil {
+				debug.Erro("%s\n", err)
+			}
 		}
 		return
 	}
