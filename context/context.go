@@ -65,6 +65,10 @@ func NewContext(parent context.Context, w http.ResponseWriter, r *http.Request) 
 	return ctx
 }
 
+func (c *Context) Ctx() context.Context {
+	return c.Context.Context
+}
+
 func (c *Context) TraceId() string {
 	return c.traceId
 }
