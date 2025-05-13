@@ -28,14 +28,13 @@ const (
 )
 
 func init() {
-	pool.DefaultNoCtx(ctx_namespace, ctx_name, func() any {
-		return &Context{Params: make(Params), Rpcs: make(Rpcs), data: make(map[string]any), ObjNoCtx: object.NewObjNoCtx(ctx_namespace, ctx_name)}
+	pool.Default(ctx_namespace, ctx_name, func() any {
+		return &Context{Params: make(Params), Rpcs: make(Rpcs), data: make(map[string]any), Object: object.NewObject(ctx_namespace, ctx_name)}
 	})
 }
 
 type Context struct {
-	*object.ObjNoCtx
-	*pool.Context
+	*object.Object
 	w               http.ResponseWriter
 	Request         *http.Request
 	ac              ActionInterface
@@ -51,10 +50,8 @@ type Context struct {
 	Rules           *validator.ParamRules
 }
 
-func NewContext(parent context.Context, w http.ResponseWriter, r *http.Request) *Context {
-	pc := pool.NewContext(parent)
-	ctx := pc.GetNoCtx(ctx_namespace, ctx_name).(*Context)
-	ctx.Context = pc
+func NewContext(parent *pool.Context, w http.ResponseWriter, r *http.Request) *Context {
+	ctx := parent.Get(ctx_namespace, ctx_name).(*Context)
 	ctx.w = w
 	ctx.Request = r
 	if nodeId, err := env.GetInt("APP_NODE_ID"); err == nil {
@@ -63,10 +60,6 @@ func NewContext(parent context.Context, w http.ResponseWriter, r *http.Request) 
 		ctx.traceId = trace.TraceId(1001)
 	}
 	return ctx
-}
-
-func (c *Context) Ctx() context.Context {
-	return c.Context.Context
 }
 
 func (c *Context) TraceId() string {
@@ -129,8 +122,8 @@ func (c *Context) GetBool(key string) bool {
 
 func (c *Context) WithTimeout(timeout time.Duration) context.CancelFunc {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), timeout)
-	c.Context = pool.NewContext(ctx)
-	c.Request = c.Request.WithContext(c)
+	c.Context = ctx
+	c.Request = c.Request.WithContext(c.Context)
 	return cancel
 }
 

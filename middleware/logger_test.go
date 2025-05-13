@@ -9,6 +9,7 @@ import (
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/controller"
+	"github.com/kovey/pool"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,8 +18,9 @@ func TestLogger(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest("GET", "/user/info", nil)
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
+	pc := pool.NewContext(c.Background())
+	ctx := context.NewContext(pc, w, request)
+	defer pc.Drop()
 	ctx.Middleware(&Logger{})
 	ctx.SetAction(controller.NewNotFound())
 	ctx.MiddlerwareStart()

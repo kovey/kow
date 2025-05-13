@@ -10,6 +10,7 @@ import (
 	"github.com/kovey/kow/controller"
 	"github.com/kovey/kow/middleware"
 	"github.com/kovey/kow/router"
+	"github.com/kovey/pool"
 )
 
 type Engine struct {
@@ -95,11 +96,11 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		maxRunTime = 60 * time.Second
 	}
 	parent, cancel := cc.WithTimeout(r.Context(), maxRunTime)
-	ctx := context.NewContext(parent, w, r)
+	ctx := pool.NewContext(parent)
 	defer ctx.Drop()
 	defer cancel()
 
-	e.routers.HandleHTTP(ctx)
+	e.routers.HandleHTTP(context.NewContext(ctx, w, r))
 }
 
 func (e *Engine) Run(addr string) error {

@@ -10,6 +10,7 @@ import (
 	"github.com/kovey/discovery/krpc"
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/view"
+	"github.com/kovey/pool"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -41,8 +42,9 @@ func TestRecovery(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest("GET", "/user/info", nil)
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
+	pc := pool.NewContext(c.Background())
+	ctx := context.NewContext(pc, w, request)
+	defer pc.Drop()
 	ctx.Middleware(&Recovery{})
 	ctx.SetAction(newTestAction())
 	ctx.MiddlerwareStart()
@@ -60,8 +62,9 @@ func TestRecoveryWith(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest("GET", "/user/info", nil)
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
+	pc := pool.NewContext(c.Background())
+	ctx := context.NewContext(pc, w, request)
+	defer pc.Drop()
 	ctx.Middleware(&Recovery{CallerStart: 3})
 	ctx.SetAction(newTestAction())
 	ctx.MiddlerwareStart()

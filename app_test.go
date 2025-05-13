@@ -15,6 +15,7 @@ import (
 	"github.com/kovey/kow/controller"
 	"github.com/kovey/kow/validator/rule"
 	"github.com/kovey/kow/view"
+	"github.com/kovey/pool"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -243,8 +244,8 @@ func TestAppOptions(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodOptions, "/user/options", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
+	pc := pool.NewContext(c.Background())
+	defer pc.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -261,8 +262,6 @@ func TestAppTrace(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodTrace, "/user/trace", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)

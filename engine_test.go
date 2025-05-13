@@ -2,7 +2,6 @@ package kow
 
 import (
 	"bytes"
-	c "context"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -36,8 +35,6 @@ func TestEnginePost(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodPost, "/users/post", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -54,8 +51,6 @@ func TestEnginePut(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodPut, "/users/put", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -72,8 +67,6 @@ func TestEnginePatch(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodPatch, "/users/patch", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -90,8 +83,6 @@ func TestEngineHead(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodHead, "/users/head", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -108,8 +99,6 @@ func TestEngineDelete(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodDelete, "/users/delete", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -126,8 +115,6 @@ func TestEngineConnect(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodConnect, "/users/connect", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -144,8 +131,6 @@ func TestEngineOptions(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodOptions, "/users/options", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
@@ -162,8 +147,6 @@ func TestEngineTrace(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodTrace, "/users/trace", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
 	engine.ServeHTTP(w, request)
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)

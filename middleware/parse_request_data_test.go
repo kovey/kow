@@ -9,6 +9,7 @@ import (
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/validator"
 	"github.com/kovey/kow/validator/rule"
+	"github.com/kovey/pool"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,8 +35,9 @@ func TestParseRequestData(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest("GET", "/user/info?email=kovey@kovey.com&password=123456&age=18", nil)
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
+	pc := pool.NewContext(c.Background())
+	ctx := context.NewContext(pc, w, request)
+	defer pc.Drop()
 	ctx.ReqData = &req_data{}
 	ctx.Middleware(NewParseRequestData())
 	ctx.SetAction(newTestActionValid(context.Content_Type_Json))
@@ -53,8 +55,9 @@ func TestParseRequestDataErr(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest("GET", "/user/info?email=kovey@kovey.com&password=123456&age=18", nil)
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
+	pc := pool.NewContext(c.Background())
+	ctx := context.NewContext(pc, w, request)
+	defer pc.Drop()
 	ctx.ReqData = &req_data_parse{}
 	ctx.Rules = validator.NewParamRules()
 	ctx.Rules.Add("email", "maxlen:int:128", "email")

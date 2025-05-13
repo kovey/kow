@@ -13,6 +13,7 @@ import (
 	"github.com/kovey/kow/validator"
 	"github.com/kovey/kow/validator/rule"
 	"github.com/kovey/kow/view"
+	"github.com/kovey/pool"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -88,8 +89,9 @@ func TestChain(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest("POST", "/user/info", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
+	pc := pool.NewContext(c.Background())
+	ctx := context.NewContext(pc, w, request)
+	defer pc.Drop()
 	chain := &Chain{Action: newTestAction(), rules: validator.NewParamRules(), param: &req_data{}}
 	chain.Middlewares = append(chain.Middlewares, &test_middle{})
 	chain.handle(ctx)
@@ -108,8 +110,9 @@ func TestChainFile(t *testing.T) {
 	w := httptest.NewRecorder()
 	request := httptest.NewRequest("POST", "/user/info", bytes.NewBuffer([]byte(`{"email":"kovey@kovey.com","password":"123456","age":18}`)))
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
-	ctx := context.NewContext(c.Background(), w, request)
-	defer ctx.Drop()
+	pc := pool.NewContext(c.Background())
+	ctx := context.NewContext(pc, w, request)
+	defer pc.Drop()
 	chain := &Chain{}
 	chain.SetFileServer(&test_file_server{})
 	chain.handle(ctx)
