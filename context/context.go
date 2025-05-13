@@ -59,6 +59,7 @@ func NewContext(parent *pool.Context, w http.ResponseWriter, r *http.Request) *C
 	} else {
 		ctx.traceId = trace.TraceId(1001)
 	}
+	ctx.Context = context.WithValue(ctx.Context, "ko_trace_id", ctx.traceId)
 	return ctx
 }
 
@@ -122,6 +123,7 @@ func (c *Context) GetBool(key string) bool {
 
 func (c *Context) WithTimeout(timeout time.Duration) context.CancelFunc {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), timeout)
+	ctx = context.WithValue(ctx, "ko_trace_id", c.traceId)
 	c.Context = ctx
 	c.Request = c.Request.WithContext(c.Context)
 	return cancel
