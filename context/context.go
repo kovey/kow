@@ -136,8 +136,7 @@ func (c *Context) GetBool(key string) bool {
 
 func (c *Context) WithTimeout(timeout time.Duration) context.CancelFunc {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), timeout)
-	ctx = context.WithValue(ctx, "ko_trace_id", c.traceId)
-	c.Context = ctx
+	c.Context = NewTraceContext(ctx, c.traceId)
 	c.Request = c.Request.WithContext(c.Context)
 	return cancel
 }
