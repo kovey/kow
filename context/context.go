@@ -33,6 +33,19 @@ func init() {
 	})
 }
 
+type TraceContext struct {
+	context.Context
+	traceId string
+}
+
+func NewTraceContext(parent context.Context, traceId string) *TraceContext {
+	return &TraceContext{Context: context.WithValue(parent, "ko_trace_id", traceId), traceId: traceId}
+}
+
+func (t *TraceContext) TraceId() string {
+	return t.traceId
+}
+
 type Context struct {
 	*object.Object
 	w               http.ResponseWriter
@@ -59,7 +72,7 @@ func NewContext(parent *pool.Context, w http.ResponseWriter, r *http.Request) *C
 	} else {
 		ctx.traceId = trace.TraceId(1001)
 	}
-	ctx.Context = context.WithValue(ctx.Context, "ko_trace_id", ctx.traceId)
+	ctx.Context = NewTraceContext(ctx.Context, ctx.traceId)
 	return ctx
 }
 
