@@ -39,7 +39,7 @@ type TraceContext struct {
 }
 
 func NewTraceContext(parent context.Context, traceId string) *TraceContext {
-	return &TraceContext{Context: context.WithValue(parent, "ko_trace_id", traceId), traceId: traceId}
+	return &TraceContext{Context: context.WithValue(parent, krpc.Ko_Trace_Id, traceId), traceId: traceId}
 }
 
 func (t *TraceContext) TraceId() string {
@@ -61,6 +61,7 @@ type Context struct {
 	traceId         string
 	ReqData         rule.ParamInterface
 	Rules           *validator.ParamRules
+	RawContent      []byte
 }
 
 func NewContext(parent *pool.Context, w http.ResponseWriter, r *http.Request) *Context {
@@ -182,6 +183,7 @@ func (c *Context) Reset() {
 	c.traceId = ""
 	c.ReqData = nil
 	c.Rules = nil
+	c.RawContent = nil
 	if len(c.Rpcs) > 0 {
 		c.Rpcs = make(Rpcs)
 	}
@@ -314,8 +316,14 @@ func (c *Context) Data(status int, contentType string, data []byte) error {
 }
 
 func (c *Context) Raw() ([]byte, error) {
+	if c.RawContent != nil {
+		return c.RawContent, nil
+	}
+
 	defer c.Request.Body.Close()
-	return io.ReadAll(c.Request.Body)
+	content, err := io.ReadAll(c.Request.Body)
+	c.RawContent = content
+	return c.RawContent, err
 }
 
 func (c *Context) ParseForm(data rule.ParamInterface) error {

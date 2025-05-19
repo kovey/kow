@@ -34,21 +34,21 @@ func (p *ParseRequestData) Handle(ctx *context.Context) {
 		case context.Content_Type_Form:
 			if err := ctx.ParseForm(ctx.ReqData); err != nil {
 				if err := result.ErrForm(ctx, result.Codes_Invalid_Params, err.Error()); err != nil {
-					debug.Erro("%s\n", err)
+					debug.Erro("%s %s\n", ctx.TraceId(), err)
 				}
 				return
 			}
 		case context.Content_Type_Json:
 			if err := ctx.ParseJson(ctx.ReqData); err != nil {
 				if err := result.Err(ctx, result.Codes_Invalid_Params, err.Error()); err != nil {
-					debug.Erro("%s\n", err)
+					debug.Erro("%s %s\n", ctx.TraceId(), err)
 				}
 				return
 			}
 		case context.Content_Type_Xml:
 			if err := ctx.ParseXml(ctx.ReqData); err != nil {
 				if err := result.ErrXml(ctx, result.Codes_Invalid_Params, err.Error()); err != nil {
-					debug.Erro("%s\n", err)
+					debug.Erro("%s %s\n", ctx.TraceId(), err)
 				}
 				return
 			}

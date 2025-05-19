@@ -45,7 +45,7 @@ func (r *Recovery) Handle(ctx *context.Context) {
 		if err := ctx.Html(http.StatusInternalServerError, nil); err != nil {
 			debug.Erro(err.Error())
 		}
-		debug.Erro("%s\n %s", err, r.stack())
+		debug.Erro("%s %s\n %s", ctx.TraceId(), err, r.stack())
 	}()
 
 	ctx.Next()

@@ -26,19 +26,19 @@ func (s *Validator) Handle(ctx *context.Context) {
 		switch strings.ToLower(ctx.GetHeader(context.Content_Type_Key)) {
 		case context.Content_Type_Form:
 			if err := result.ErrForm(ctx, result.Codes_Invalid_Params, err.Error()); err != nil {
-				debug.Erro("%s\n", err)
+				debug.Erro("%s %s\n", ctx.TraceId(), err)
 			}
 		case context.Content_Type_Json:
 			if err := result.Err(ctx, result.Codes_Invalid_Params, err.Error()); err != nil {
-				debug.Erro("%s\n", err)
+				debug.Erro("%s %s\n", ctx.TraceId(), err)
 			}
 		case context.Content_Type_Xml:
 			if err := result.ErrXml(ctx, result.Codes_Invalid_Params, err.Error()); err != nil {
-				debug.Erro("%s\n", err)
+				debug.Erro("%s %s\n", ctx.TraceId(), err)
 			}
 		default:
 			if err := result.Err(ctx, result.Codes_Invalid_Params, err.Error()); err != nil {
-				debug.Erro("%s\n", err)
+				debug.Erro("%s %s\n", ctx.TraceId(), err)
 			}
 		}
 		return
