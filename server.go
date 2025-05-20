@@ -33,6 +33,7 @@ func newServer(e serv.EventInterface) *server {
 }
 
 func (s *server) Flag(a app.AppInterface) error {
+	a.FlagArg("config", "create config", 0)
 	if s.e != nil {
 		return s.e.OnFlag(a)
 	}
@@ -85,7 +86,7 @@ func (s *server) runOhter() {
 	}
 }
 
-func (s *server) Run(a app.AppInterface) error {
+func (s *server) start(a app.AppInterface) error {
 	if etcdOpen, err := env.GetBool(APP_ETCD_OPEN); err == nil && etcdOpen {
 		timeout, _ := env.GetInt(ETCD_TIMEOUT)
 		conf := etcd.Config{
@@ -110,6 +111,33 @@ func (s *server) Run(a app.AppInterface) error {
 	if err := engine.Run(fmt.Sprintf("%s:%s", os.Getenv(SERV_HOST), os.Getenv(SERV_PORT))); err != nil {
 		return err
 	}
+	return nil
+}
+
+func (s *server) Usage() {
+	if s.e == nil {
+		s.ServBase.Usage()
+		return
+	}
+
+	s.e.Usage()
+}
+
+func (s *server) Run(a app.AppInterface) error {
+	method, err := a.Arg(0, app.TYPE_STRING)
+	if err != nil {
+		method, _ = a.Get("start")
+	}
+
+	switch method.String() {
+	case "create":
+		if s.e != nil {
+			return s.e.CreateConfig(a)
+		}
+	default:
+		return s.start(a)
+	}
+
 	return nil
 }
 
