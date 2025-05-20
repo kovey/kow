@@ -120,7 +120,9 @@ func (s *server) Usage() {
 		return
 	}
 
-	s.e.Usage()
+	if !s.e.Usage() {
+		s.ServBase.Usage()
+	}
 }
 
 func (s *server) Run(a app.AppInterface) error {
