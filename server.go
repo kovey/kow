@@ -19,6 +19,10 @@ import (
 	"github.com/kovey/kow/serv"
 )
 
+const (
+	command_create = "create"
+)
+
 var engine = NewDefault()
 
 type server struct {
@@ -33,7 +37,7 @@ func newServer(e serv.EventInterface) *server {
 }
 
 func (s *server) Flag(a app.AppInterface) error {
-	a.FlagArg("config", "create config", 0)
+	a.FlagArg(command_create, "create config", 0)
 	if s.e != nil {
 		return s.e.OnFlag(a)
 	}
@@ -128,11 +132,11 @@ func (s *server) Usage() {
 func (s *server) Run(a app.AppInterface) error {
 	method, err := a.Arg(0, app.TYPE_STRING)
 	if err != nil {
-		method, _ = a.Get("start")
+		method, _ = a.Get(app.Ko_Command_Start)
 	}
 
 	switch method.String() {
-	case "create":
+	case command_create:
 		if s.e != nil {
 			return s.e.CreateConfig(a)
 		}
