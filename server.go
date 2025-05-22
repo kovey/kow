@@ -56,15 +56,9 @@ func (s *server) Init(a app.AppInterface) error {
 		return err
 	}
 	time.Local = location
-
 	if s.e != nil {
-		return s.e.OnBefore(a)
+		s.e.SetName(a.Name())
 	}
-
-	if s.e != nil {
-		return s.e.OnAfter(a)
-	}
-
 	return nil
 }
 
@@ -100,6 +94,10 @@ func (s *server) start(a app.AppInterface) error {
 		return fmt.Errorf(".env config not found, use create command get .env file")
 	}
 
+	if s.e != nil {
+		return s.e.OnBefore(a)
+	}
+
 	if etcdOpen, err := env.GetBool(APP_ETCD_OPEN); err == nil && etcdOpen {
 		timeout, _ := env.GetInt(ETCD_TIMEOUT)
 		conf := etcd.Config{
@@ -119,6 +117,9 @@ func (s *server) start(a app.AppInterface) error {
 	go s.runMonitor()
 	s.wait.Add(1)
 	go s.runOhter()
+	if s.e != nil {
+		return s.e.OnAfter(a)
+	}
 
 	debug.Info("app[%s] listen on [%s:%s]", a.Name(), os.Getenv(SERV_HOST), os.Getenv(SERV_PORT))
 	if err := engine.Run(fmt.Sprintf("%s:%s", os.Getenv(SERV_HOST), os.Getenv(SERV_PORT))); err != nil {
