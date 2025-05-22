@@ -73,7 +73,11 @@ func Group(path string) *router.Group {
 }
 
 func Run(e serv.EventInterface) {
-	cli := app.NewApp(os.Getenv(env.APP_NAME))
+	name := os.Getenv(env.APP_NAME)
+	if name == "" {
+		name = "kow"
+	}
+	cli := app.NewApp(name)
 	serv := newServer(e)
 	cli.SetServ(serv)
 	if err := cli.Run(); err != nil {

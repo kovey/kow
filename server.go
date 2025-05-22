@@ -96,6 +96,10 @@ func (s *server) runOhter() {
 }
 
 func (s *server) start(a app.AppInterface) error {
+	if !env.HasEnv() {
+		return fmt.Errorf(".env config not found, use create command get .env file")
+	}
+
 	if etcdOpen, err := env.GetBool(APP_ETCD_OPEN); err == nil && etcdOpen {
 		timeout, _ := env.GetInt(ETCD_TIMEOUT)
 		conf := etcd.Config{
