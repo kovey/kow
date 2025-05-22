@@ -35,7 +35,7 @@ type server struct {
 }
 
 func newServer(e serv.EventInterface) *server {
-	return &server{wait: sync.WaitGroup{}, e: e}
+	return &server{wait: sync.WaitGroup{}, e: e, ServBase: &app.ServBase{}}
 }
 
 func (s *server) Flag(a app.AppInterface) error {
@@ -90,7 +90,7 @@ func (s *server) runOhter() {
 }
 
 func (s *server) start(a app.AppInterface) error {
-	if !env.HasEnv() {
+	if !env.CheckDefault() {
 		return fmt.Errorf(".env config not found, use create command get .env file")
 	}
 
