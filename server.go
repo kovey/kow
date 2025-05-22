@@ -95,7 +95,9 @@ func (s *server) start(a app.AppInterface) error {
 	}
 
 	if s.e != nil {
-		return s.e.OnBefore(a)
+		if err := s.e.OnBefore(a); err != nil {
+			return err
+		}
 	}
 
 	if etcdOpen, err := env.GetBool(APP_ETCD_OPEN); err == nil && etcdOpen {
@@ -113,13 +115,16 @@ func (s *server) start(a app.AppInterface) error {
 		}
 	}
 
+	if s.e != nil {
+		if err := s.e.OnAfter(a); err != nil {
+			return err
+		}
+	}
+
 	s.wait.Add(1)
 	go s.runMonitor()
 	s.wait.Add(1)
 	go s.runOhter()
-	if s.e != nil {
-		return s.e.OnAfter(a)
-	}
 
 	debug.Info("app[%s] listen on [%s:%s]", a.Name(), os.Getenv(SERV_HOST), os.Getenv(SERV_PORT))
 	if err := engine.Run(fmt.Sprintf("%s:%s", os.Getenv(SERV_HOST), os.Getenv(SERV_PORT))); err != nil {
