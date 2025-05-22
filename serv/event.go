@@ -10,11 +10,17 @@ type EventInterface interface {
 	OnAfter(app.AppInterface) error
 	OnRun() error
 	OnShutdown()
-	CreateConfig(app.AppInterface) error
+	CreateConfig(path string) error
 	Usage() bool
+	SetName(name string)
 }
 
 type EventBase struct {
+	name string
+}
+
+func (s *EventBase) SetName(name string) {
+	s.name = name
 }
 
 func (s *EventBase) OnBefore(app.AppInterface) error {

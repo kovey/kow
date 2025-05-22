@@ -13,6 +13,7 @@ import (
 
 	"github.com/kovey/cli-go/app"
 	"github.com/kovey/cli-go/env"
+	"github.com/kovey/cli-go/util"
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/discovery/etcd"
 	"github.com/kovey/kow/resolver"
@@ -21,6 +22,7 @@ import (
 
 const (
 	command_create = "create"
+	arg_path       = "path"
 )
 
 var engine = NewDefault()
@@ -37,9 +39,12 @@ func newServer(e serv.EventInterface) *server {
 }
 
 func (s *server) Flag(a app.AppInterface) error {
-	a.FlagArg(command_create, "create config", 0)
+	a.FlagArg(command_create, "create config .env")
+	a.FlagLong(arg_path, util.RunDir(), app.TYPE_STRING, "path of .env file", "create")
 	if s.e != nil {
-		return s.e.OnFlag(a)
+		if err := s.e.OnFlag(a); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -138,7 +143,8 @@ func (s *server) Run(a app.AppInterface) error {
 	switch method.String() {
 	case command_create:
 		if s.e != nil {
-			return s.e.CreateConfig(a)
+			f, _ := a.Get(command_create, arg_path)
+			return s.e.CreateConfig(f.String())
 		}
 	default:
 		return s.start(a)
