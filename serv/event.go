@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/kovey/cli-go/app"
+	"github.com/kovey/cli-go/env"
 )
 
 type EventInterface interface {
@@ -50,5 +51,5 @@ func (s *EventBase) Usage() bool {
 }
 
 func (s *EventBase) AppName() string {
-	return os.Getenv("APP_NAME")
+	return os.Getenv(env.APP_NAME)
 }
