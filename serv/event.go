@@ -1,6 +1,8 @@
 package serv
 
 import (
+	"os"
+
 	"github.com/kovey/cli-go/app"
 )
 
@@ -13,6 +15,7 @@ type EventInterface interface {
 	CreateConfig(path string) error
 	Usage() bool
 	SetName(name string)
+	AppName() string
 }
 
 type EventBase struct {
@@ -44,4 +47,8 @@ func (s *EventBase) CreateConfig(app.AppInterface) error {
 
 func (s *EventBase) Usage() bool {
 	return false
+}
+
+func (s *EventBase) AppName() string {
+	return os.Getenv("APP_NAME")
 }

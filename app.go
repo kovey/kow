@@ -2,11 +2,9 @@ package kow
 
 import (
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/kovey/cli-go/app"
-	"github.com/kovey/cli-go/env"
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/controller"
@@ -73,10 +71,11 @@ func Group(path string) *router.Group {
 }
 
 func Run(e serv.EventInterface) {
-	name := os.Getenv(env.APP_NAME)
-	if name == "" {
-		name = "kow"
+	name := "kow"
+	if e != nil {
+		name = e.AppName()
 	}
+
 	cli := app.NewApp(name)
 	serv := newServer(e)
 	cli.SetServ(serv)
