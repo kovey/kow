@@ -2,9 +2,11 @@ package kow
 
 import (
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/kovey/cli-go/app"
+	"github.com/kovey/cli-go/env"
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/controller"
@@ -77,6 +79,10 @@ func Run(e serv.EventInterface) {
 	}
 
 	cli := app.NewApp(name)
+	cli.SetDebugLevel(debug.DebugType(os.Getenv(env.DEBUG_LEVEL)))
+	if line, err := env.GetInt(env.DEBUG_SHOW_FILE); err == nil {
+		debug.SetFileLine(debug.FileLine(line))
+	}
 	serv := newServer(e)
 	cli.SetServ(serv)
 	if err := cli.Run(); err != nil {
