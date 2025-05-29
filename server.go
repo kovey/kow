@@ -128,7 +128,9 @@ func (s *server) start(a app.AppInterface) error {
 
 	debug.Info("app[%s] listen on [%s:%s]", a.Name(), os.Getenv(SERV_HOST), os.Getenv(SERV_PORT))
 	if err := engine.Run(fmt.Sprintf("%s:%s", os.Getenv(SERV_HOST), os.Getenv(SERV_PORT))); err != nil {
-		return err
+		debug.Erro(err.Error())
+		s.Shutdown(a)
+		return app.Err_Not_Restart
 	}
 	return nil
 }

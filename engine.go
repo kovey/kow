@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/controller"
 	"github.com/kovey/kow/middleware"
@@ -105,8 +104,12 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (e *Engine) Run(addr string) error {
 	e.serv = &http.Server{Addr: addr, Handler: e}
-	debug.Info("listen on: %s", addr)
-	return e.serv.ListenAndServe()
+	err := e.serv.ListenAndServe()
+	if err == http.ErrServerClosed {
+		return nil
+	}
+
+	return err
 }
 
 func (e *Engine) Shutdown() error {
