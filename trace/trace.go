@@ -2,6 +2,7 @@ package trace
 
 import (
 	"encoding/binary"
+	"fmt"
 	"math/rand"
 	"strings"
 	"time"
@@ -22,31 +23,44 @@ var bitmap = map[byte]byte{
 var r = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 func _encode(data uint32) []byte {
+	var result = []byte{bits[0], bits[0], bits[0], bits[0], bits[0], bits[0], bits[0]}
 	if data == 0 {
-		return []byte{bits[0]}
+		return result
 	}
 
-	var result []byte
+	index := 0
 	for data > 0 {
-		result = append(result, bits[data&31])
+		result[index] = bits[data&31]
 		data = data >> 5
+		index++
 	}
 
 	return result
 }
 
-func Encode(data int64) []byte {
+func EncodeUint64(data uint64) []byte {
 	dataBytes := make([]byte, 8)
-	binary.BigEndian.PutUint64(dataBytes, uint64(data))
+	binary.BigEndian.PutUint64(dataBytes, data)
 	header := append(_encode(binary.BigEndian.Uint32(dataBytes[0:4])), '-')
 	return append(header, _encode(binary.BigEndian.Uint32(dataBytes[4:]))...)
+}
+
+func Encode(data int64) []byte {
+	return EncodeUint64(uint64(data))
 }
 
 func _decode(data []byte) []byte {
 	var num uint32
 	count := len(data) - 1
+	if count != 6 {
+		panic("data char len not 7")
+	}
+
 	for i := count; i >= 0; i-- {
-		tmp := bitmap[data[i]]
+		tmp, ok := bitmap[data[i]]
+		if !ok {
+			panic(fmt.Sprintf("unkown char: %c", data[i]))
+		}
 		num += uint32(tmp) * (1 << (5 * i))
 	}
 
@@ -55,7 +69,7 @@ func _decode(data []byte) []byte {
 	return dataBytes
 }
 
-func Decode(data []byte) int64 {
+func DecodeUint64(data []byte) uint64 {
 	var split = 0
 	for index, char := range data {
 		if char == '-' {
@@ -64,7 +78,11 @@ func Decode(data []byte) int64 {
 		}
 	}
 
-	return int64(binary.BigEndian.Uint64(append(_decode(data[0:split]), _decode(data[split+1:])...)))
+	return binary.BigEndian.Uint64(append(_decode(data[0:split]), _decode(data[split+1:])...))
+}
+
+func Decode(data []byte) int64 {
+	return int64(DecodeUint64(data))
 }
 
 func TraceId(prefix int64) string {
