@@ -68,6 +68,7 @@ type Context struct {
 	ReqData         rule.ParamInterface
 	Rules           *validator.ParamRules
 	RawContent      []byte
+	RespData        []byte
 }
 
 func NewContext(parent *pool.Context, w http.ResponseWriter, r *http.Request) *Context {
@@ -195,6 +196,7 @@ func (c *Context) Reset() {
 	c.ReqData = nil
 	c.Rules = nil
 	c.RawContent = nil
+	c.RespData = nil
 	if len(c.Rpcs) > 0 {
 		c.Rpcs = make(Rpcs)
 	}
@@ -322,6 +324,7 @@ func (c *Context) Data(status int, contentType string, data []byte) error {
 	c.Header(Content_Type_Key, contentType)
 	c.Header(Header_X_Request_Id, c.traceId)
 	c.w.WriteHeader(c.status)
+	c.RespData = data
 	_, err := c.w.Write(data)
 	return err
 }
