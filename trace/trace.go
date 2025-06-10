@@ -94,3 +94,11 @@ func TraceId(prefix int64) string {
 	builder.Write(Encode(r.Int63()))
 	return builder.String()
 }
+
+func SpanId() string {
+	var builder strings.Builder
+	builder.Write(Encode(time.Now().UnixNano()))
+	builder.WriteByte('-')
+	builder.Write(Encode(r.Int63()))
+	return builder.String()
+}

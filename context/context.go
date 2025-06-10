@@ -36,14 +36,19 @@ func init() {
 type TraceContext struct {
 	context.Context
 	traceId string
+	spanId  string
 }
 
 func NewTraceContext(parent context.Context, traceId string) *TraceContext {
-	return &TraceContext{Context: context.WithValue(parent, krpc.Ko_Trace_Id, traceId), traceId: traceId}
+	return &TraceContext{Context: context.WithValue(parent, krpc.Ko_Trace_Id, traceId), traceId: traceId, spanId: trace.SpanId()}
 }
 
 func (t *TraceContext) TraceId() string {
 	return t.traceId
+}
+
+func (t *TraceContext) SpandId() string {
+	return t.spanId
 }
 
 type Context struct {
@@ -59,6 +64,7 @@ type Context struct {
 	Rpcs            Rpcs
 	data            map[string]any
 	traceId         string
+	spanId          string
 	ReqData         rule.ParamInterface
 	Rules           *validator.ParamRules
 	RawContent      []byte
@@ -74,11 +80,16 @@ func NewContext(parent *pool.Context, w http.ResponseWriter, r *http.Request) *C
 		ctx.traceId = trace.TraceId(1001)
 	}
 	ctx.Context = NewTraceContext(ctx.Context, ctx.traceId)
+	ctx.spanId = ctx.Context.(*TraceContext).SpandId()
 	return ctx
 }
 
 func (c *Context) TraceId() string {
 	return c.traceId
+}
+
+func (c *Context) SpandId() string {
+	return c.spanId
 }
 
 func (c *Context) Set(key string, val any) {
