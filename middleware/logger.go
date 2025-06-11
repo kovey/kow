@@ -27,12 +27,12 @@ func (l *Logger) Handle(ctx *context.Context) {
 	defer func() {
 		end := time.Now()
 		if !debug.FormatIsJson() {
-			debug.LogWith(ctx.TraceId(), ctx.SpandId()).Info(
+			ctx.Log.Info(
 				"%s %s %.3fms %d %s %s", ctx.Request.Method, ctx.Request.URL.Path, float64(end.Sub(start).Microseconds())*0.001, ctx.GetStatus(), string(ctx.RawContent), string(ctx.RespData),
 			)
 			return
 		}
-		debug.Json(logInfo{
+		ctx.Log.Json(logInfo{
 			Method: ctx.Request.Method, Path: ctx.Request.URL.Path, Delay: fmt.Sprintf("%.3fms", float64(end.Sub(start).Microseconds())*0.001), Status: ctx.GetStatus(),
 			TraceId: ctx.TraceId(), SpanId: ctx.SpandId(), Request: string(ctx.RawContent), Response: string(ctx.RespData),
 		})

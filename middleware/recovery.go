@@ -6,7 +6,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
 )
 
@@ -43,9 +42,9 @@ func (r *Recovery) Handle(ctx *context.Context) {
 		}
 
 		if err := ctx.Html(http.StatusInternalServerError, nil); err != nil {
-			debug.LogWith(ctx.TraceId(), ctx.SpandId()).Erro(err.Error())
+			ctx.Log.Erro(err.Error())
 		}
-		debug.LogWith(ctx.TraceId(), ctx.SpandId()).Erro("%s\r\n %s", err, r.stack())
+		ctx.Log.Erro("%s\r\n %s", err, r.stack())
 	}()
 
 	ctx.Next()

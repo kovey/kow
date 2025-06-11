@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/result"
 )
@@ -25,7 +24,7 @@ func (p *ParseRequestData) Handle(ctx *context.Context) {
 	if ctx.Request.Method != http.MethodPost && ctx.Request.Method != http.MethodPut && ctx.Request.Method != http.MethodPatch {
 		if err := ctx.ParseForm(ctx.ReqData); err != nil {
 			if err := result.ErrForm(ctx, result.Codes_Invalid_Params, err.Error()); err != nil {
-				debug.LogWith(ctx.TraceId(), ctx.SpandId()).Erro("%s", err)
+				ctx.Log.Erro("%s", err)
 			}
 			return
 		}
@@ -34,21 +33,21 @@ func (p *ParseRequestData) Handle(ctx *context.Context) {
 		case context.Content_Type_Form:
 			if err := ctx.ParseForm(ctx.ReqData); err != nil {
 				if err := result.ErrForm(ctx, result.Codes_Invalid_Params, err.Error()); err != nil {
-					debug.LogWith(ctx.TraceId(), ctx.SpandId()).Erro("%s", err)
+					ctx.Log.Erro("%s", err)
 				}
 				return
 			}
 		case context.Content_Type_Json:
 			if err := ctx.ParseJson(ctx.ReqData); err != nil {
 				if err := result.Err(ctx, result.Codes_Invalid_Params, err.Error()); err != nil {
-					debug.LogWith(ctx.TraceId(), ctx.SpandId()).Erro("%s", err)
+					ctx.Log.Erro("%s", err)
 				}
 				return
 			}
 		case context.Content_Type_Xml:
 			if err := ctx.ParseXml(ctx.ReqData); err != nil {
 				if err := result.ErrXml(ctx, result.Codes_Invalid_Params, err.Error()); err != nil {
-					debug.LogWith(ctx.TraceId(), ctx.SpandId()).Erro("%s", err)
+					ctx.Log.Erro("%s", err)
 				}
 				return
 			}

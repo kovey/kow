@@ -69,6 +69,7 @@ type Context struct {
 	Rules           *validator.ParamRules
 	RawContent      []byte
 	RespData        []byte
+	Log             *debug.Log
 }
 
 func NewContext(parent *pool.Context, w http.ResponseWriter, r *http.Request) *Context {
@@ -82,6 +83,7 @@ func NewContext(parent *pool.Context, w http.ResponseWriter, r *http.Request) *C
 	}
 	ctx.Context = NewTraceContext(ctx.Context, ctx.traceId)
 	ctx.spanId = ctx.Context.(*TraceContext).SpandId()
+	ctx.Log = debug.LogWith(ctx.traceId, ctx.spanId)
 	return ctx
 }
 
@@ -197,6 +199,7 @@ func (c *Context) Reset() {
 	c.Rules = nil
 	c.RawContent = nil
 	c.RespData = nil
+	c.Log = nil
 	if len(c.Rpcs) > 0 {
 		c.Rpcs = make(Rpcs)
 	}
