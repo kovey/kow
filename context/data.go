@@ -2,6 +2,7 @@ package context
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/kovey/debug-go/debug"
 )
@@ -9,6 +10,22 @@ import (
 type Params map[string]string
 
 const MatchedRoutePathParam = "$matchedRoutePath"
+
+func (p Params) String() string {
+	var builder strings.Builder
+	index := 0
+	for key, val := range p {
+		if index > 0 {
+			builder.WriteByte('&')
+		}
+
+		builder.WriteString(key)
+		builder.WriteByte('=')
+		builder.WriteString(val)
+	}
+
+	return builder.String()
+}
 
 func (p Params) MatchedRoutePath() string {
 	return p[MatchedRoutePathParam]

@@ -18,6 +18,7 @@ type logInfo struct {
 	Status   int    `json:"status"`
 	TraceId  string `json:"trace_id"`
 	SpanId   string `json:"span_id"`
+	Params   string `json:"params"`
 	Request  string `json:"request"`
 	Response string `json:"response"`
 }
@@ -28,13 +29,13 @@ func (l *Logger) Handle(ctx *context.Context) {
 		end := time.Now()
 		if !debug.FormatIsJson() {
 			ctx.Log.Info(
-				"%s %s %.3fms %d %s %s", ctx.Request.Method, ctx.Request.URL.Path, float64(end.Sub(start).Microseconds())*0.001, ctx.GetStatus(), string(ctx.RawContent), string(ctx.RespData),
+				"%s %s %.3fms %d %s %s %s", ctx.Request.Method, ctx.Request.URL.Path, float64(end.Sub(start).Microseconds())*0.001, ctx.GetStatus(), ctx.Params.String(), string(ctx.RawContent), string(ctx.RespData),
 			)
 			return
 		}
 		ctx.Log.Json(logInfo{
 			Method: ctx.Request.Method, Path: ctx.Request.URL.Path, Delay: fmt.Sprintf("%.3fms", float64(end.Sub(start).Microseconds())*0.001), Status: ctx.GetStatus(),
-			TraceId: ctx.TraceId(), SpanId: ctx.SpandId(), Request: string(ctx.RawContent), Response: string(ctx.RespData),
+			TraceId: ctx.TraceId(), SpanId: ctx.SpandId(), Params: ctx.Params.String(), Request: string(ctx.RawContent), Response: string(ctx.RespData),
 		})
 	}()
 
