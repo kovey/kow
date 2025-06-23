@@ -12,6 +12,10 @@ type Params map[string]string
 const MatchedRoutePathParam = "$matchedRoutePath"
 
 func (p Params) String() string {
+	if p == nil || len(p) == 0 {
+		return ""
+	}
+
 	var builder strings.Builder
 	index := 0
 	for key, val := range p {
