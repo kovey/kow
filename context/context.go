@@ -55,7 +55,7 @@ type Context struct {
 	*object.Object
 	w               http.ResponseWriter
 	Request         *http.Request
-	ac              ActionInterface
+	ac              *Action
 	Params          Params
 	middlewares     []MiddlewareInterface
 	middlewareIndex int
@@ -172,7 +172,7 @@ func (c *Context) Writer() http.ResponseWriter {
 	return c.w
 }
 
-func (c *Context) SetAction(ac ActionInterface) {
+func (c *Context) SetAction(ac *Action) {
 	c.ac = ac
 }
 
@@ -295,11 +295,11 @@ func (c *Context) Html(status int, data Data) error {
 	c.Status(status)
 	c.Header(Content_Type_Key, Content_Type_Html)
 	c.w.WriteHeader(c.status)
-	if c.ac == nil {
+	if c.ac == nil || c.ac.action == nil {
 		return fmt.Errorf("ac not init")
 	}
 
-	v := c.ac.View()
+	v := c.ac.action.View()
 	if v == nil {
 		return fmt.Errorf("view not init")
 	}

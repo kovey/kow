@@ -7,7 +7,7 @@ import (
 )
 
 func TestDefaultRouter(t *testing.T) {
-	d := NewDefault("POST", "/", newTestAction())
+	d := NewDefault("POST", "/", newTestAction()).(*Default)
 	d.Rule("email", "email").Rule("age", "gt:int:0", "le:int:120")
 	d.Middleware(&test_middle{})
 	d.Data(&req_data{})

@@ -18,7 +18,8 @@ func TestNotFound(t *testing.T) {
 	pc := pool.NewContext(c.Background())
 	ctx := context.NewContext(pc, w, request)
 	defer pc.Drop()
-	ctx.SetAction(NewNotFound())
+	ac := &context.Action{}
+	ctx.SetAction(ac.WithAction(NewNotFound()))
 	ctx.MiddlerwareStart()
 	result := w.Result()
 	assert.Equal(t, "404 Not Found", result.Status)

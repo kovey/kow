@@ -92,7 +92,9 @@ func TestChain(t *testing.T) {
 	pc := pool.NewContext(c.Background())
 	ctx := context.NewContext(pc, w, request)
 	defer pc.Drop()
-	chain := &Chain{Action: newTestAction(), rules: validator.NewParamRules(), param: &req_data{}}
+	ac := &context.Action{}
+	ac.WithAction(newTestAction())
+	chain := &Chain{Action: ac, rules: validator.NewParamRules(), param: &req_data{}}
 	chain.Middlewares = append(chain.Middlewares, &test_middle{})
 	chain.handle(ctx)
 	result := w.Result()

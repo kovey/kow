@@ -39,8 +39,9 @@ type test_action_valid struct {
 	contentType string
 }
 
-func newTestActionValid(t string) *test_action_valid {
-	return &test_action_valid{contentType: t}
+func newTestActionValid(t string) *context.Action {
+	ac := &context.Action{}
+	return ac.WithAction(&test_action_valid{contentType: t})
 }
 
 func (t *test_action_valid) Action(c *context.Context) error {

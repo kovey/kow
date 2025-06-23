@@ -18,7 +18,8 @@ func TestOptions(t *testing.T) {
 	pc := pool.NewContext(c.Background())
 	ctx := context.NewContext(pc, w, request)
 	defer pc.Drop()
-	ctx.SetAction(NewOptions())
+	ac := &context.Action{}
+	ctx.SetAction(ac.WithAction(NewOptions()))
 	ctx.MiddlerwareStart()
 	result := w.Result()
 	assert.Equal(t, "202 Accepted", result.Status)

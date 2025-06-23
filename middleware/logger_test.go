@@ -22,7 +22,8 @@ func TestLogger(t *testing.T) {
 	ctx := context.NewContext(pc, w, request)
 	defer pc.Drop()
 	ctx.Middleware(&Logger{})
-	ctx.SetAction(controller.NewNotFound())
+	ac := &context.Action{}
+	ctx.SetAction(ac.WithAction(controller.NewNotFound()))
 	ctx.MiddlerwareStart()
 	result := w.Result()
 	assert.Equal(t, "404 Not Found", result.Status)

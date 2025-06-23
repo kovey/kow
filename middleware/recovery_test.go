@@ -17,8 +17,9 @@ import (
 type test_action struct {
 }
 
-func newTestAction() *test_action {
-	return &test_action{}
+func newTestAction() *context.Action {
+	ac := &context.Action{}
+	return ac.WithAction(&test_action{})
 }
 
 func (t *test_action) Action(c *context.Context) error {

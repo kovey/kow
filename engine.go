@@ -25,8 +25,8 @@ func NewEngine() *Engine {
 func NewDefault() *Engine {
 	e := NewEngine()
 	e.Middleware(&middleware.Logger{}, &middleware.Recovery{}, middleware.NewParseRequestData(), middleware.NewValidator())
-	e.routers.NotFound = &router.Chain{Action: controller.NewNotFound()}
-	e.routers.GlobalOPTIONS = &router.Chain{Action: controller.NewOptions()}
+	e.routers.NotFound = router.NewChain(controller.NewNotFound())
+	e.routers.GlobalOPTIONS = router.NewChain(controller.NewOptions())
 	e.routers.HandleOPTIONS = true
 	return e
 }
@@ -72,7 +72,13 @@ func (e *Engine) TRACE(path string, ac context.ActionInterface) router.RouterInt
 }
 
 func (e *Engine) DefRouter(method string, path string, ac context.ActionInterface) router.RouterInterface {
-	ro := router.NewDefault(method, path, ac)
+	ro := router.NewRouter(method, path, ac)
+	e.routers.Add(ro)
+	return ro
+}
+
+func (e *Engine) RouterWith(method string, path string, handle context.Handle) router.RouterInterface {
+	ro := router.NewRouterWith(method, path, handle)
 	e.routers.Add(ro)
 	return ro
 }

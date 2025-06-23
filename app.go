@@ -70,6 +70,14 @@ func Group(path string) *router.Group {
 	return engine.Group(path)
 }
 
+func Router(method, path string, ac context.ActionInterface) router.RouterInterface {
+	return engine.DefRouter(method, path, ac)
+}
+
+func RouterWith(method, path string, handle context.Handle) router.RouterInterface {
+	return engine.RouterWith(method, path, handle)
+}
+
 func Run(e serv.EventInterface) {
 	name := "kow"
 	if e != nil {
@@ -86,7 +94,7 @@ func Run(e serv.EventInterface) {
 
 func OpenCors(headers ...string) {
 	engine.routers.HandleOPTIONS = true
-	engine.routers.GlobalOPTIONS = &router.Chain{Action: controller.NewOptions()}
+	engine.routers.GlobalOPTIONS = router.NewChain(controller.NewOptions())
 	engine.Middleware(&middleware.OpenCors{Headers: headers})
 }
 
@@ -99,7 +107,8 @@ func SetGlobalOPTIONS(act context.ActionInterface) {
 		engine.routers.GlobalOPTIONS = &router.Chain{}
 	}
 
-	engine.routers.GlobalOPTIONS.Action = act
+	ac := &context.Action{}
+	engine.routers.GlobalOPTIONS.Action = ac.WithAction(act)
 }
 
 func SetNotFound(act context.ActionInterface) {
@@ -107,5 +116,6 @@ func SetNotFound(act context.ActionInterface) {
 		engine.routers.NotFound = &router.Chain{}
 	}
 
-	engine.routers.NotFound.Action = act
+	ac := &context.Action{}
+	engine.routers.NotFound.Action = ac.WithAction(act)
 }

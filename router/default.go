@@ -12,8 +12,14 @@ type Default struct {
 	chain *Chain
 }
 
-func NewDefault(m string, p string, a context.ActionInterface) *Default {
-	return &Default{m: m, p: p, chain: &Chain{Action: a, rules: validator.NewParamRules()}}
+func NewDefault(m string, p string, a context.ActionInterface) RouterInterface {
+	ac := &context.Action{}
+	return &Default{m: m, p: p, chain: &Chain{Action: ac.WithAction(a), rules: validator.NewParamRules()}}
+}
+
+func NewDefaultWith(m string, p string, a context.Handle) RouterInterface {
+	ac := &context.Action{}
+	return &Default{m: m, p: p, chain: &Chain{Action: ac.WithHandle(a), rules: validator.NewParamRules()}}
 }
 
 func (d *Default) Middleware(middlewares ...context.MiddlewareInterface) RouterInterface {

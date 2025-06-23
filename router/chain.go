@@ -10,11 +10,16 @@ import (
 
 type Chain struct {
 	Middlewares []context.MiddlewareInterface
-	Action      context.ActionInterface
+	Action      *context.Action
 	isFile      bool
 	fileServer  http.Handler
 	rules       *validator.ParamRules
 	param       rule.ParamInterface
+}
+
+func NewChain(act context.ActionInterface) *Chain {
+	ac := &context.Action{}
+	return &Chain{Action: ac.WithAction(act)}
 }
 
 func (c *Chain) SetFileServer(fileServer http.Handler) {

@@ -97,7 +97,7 @@ func TestRoutersPanic(t *testing.T) {
 func TestRoutersNotFound(t *testing.T) {
 	r := NewRouters()
 	r.RedirectFixedPath = true
-	r.NotFound = &Chain{Action: controller.NewNotFound()}
+	r.NotFound = NewChain(controller.NewNotFound())
 	r.Middlerware(&test_middle{})
 	r.Group("opt").POST("get", newTestAction()).Data(&req_data{})
 	w := httptest.NewRecorder()
@@ -120,7 +120,7 @@ func TestRoutersNotFoundSlash(t *testing.T) {
 	r := NewRouters()
 	r.RedirectFixedPath = true
 	r.RedirectTrailingSlash = true
-	r.NotFound = &Chain{Action: controller.NewNotFound()}
+	r.NotFound = NewChain(controller.NewNotFound())
 	r.Middlerware(&test_middle{})
 	r.Group("opt").POST("get", newTestAction()).Data(&req_data{})
 	w := httptest.NewRecorder()
@@ -142,8 +142,8 @@ func TestRoutersNotFoundSlash(t *testing.T) {
 func TestRoutersOptions(t *testing.T) {
 	r := NewRouters()
 	r.HandleOPTIONS = true
-	r.GlobalOPTIONS = &Chain{Action: controller.NewOptions()}
-	r.NotFound = &Chain{Action: controller.NewNotFound()}
+	r.GlobalOPTIONS = NewChain(controller.NewOptions())
+	r.NotFound = NewChain(controller.NewNotFound())
 	r.Middlerware(&test_middle{})
 	r.Group("opt").POST("get", newTestAction()).Data(&req_data{})
 	w := httptest.NewRecorder()

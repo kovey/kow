@@ -53,7 +53,7 @@ func TestParseRequestData(t *testing.T) {
 
 func TestParseRequestDataErr(t *testing.T) {
 	w := httptest.NewRecorder()
-	request := httptest.NewRequest("GET", "/user/info?email=kovey@kovey.com&password=123456&age=18", nil)
+	request := httptest.NewRequest("GET", "/user/info?email=kovey@com&password=123456&age=18", nil)
 	request.Header.Add(context.Content_Type_Key, context.Content_Type_Json)
 	pc := pool.NewContext(c.Background())
 	ctx := context.NewContext(pc, w, request)

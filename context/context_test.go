@@ -212,8 +212,10 @@ type test_action struct {
 	view view.ViewInterface
 }
 
-func newTestAction() *test_action {
-	return &test_action{view: view.NewDefault(nil)}
+func newTestAction() *Action {
+	a := &Action{}
+	a.WithAction(&test_action{view: view.NewDefault(nil)})
+	return a
 }
 
 func (t *test_action) Action(c *Context) error {
