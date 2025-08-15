@@ -16,6 +16,7 @@ import (
 	"github.com/kovey/cli-go/util"
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/discovery/etcd"
+	"github.com/kovey/kow/funnel"
 	"github.com/kovey/kow/resolver"
 	"github.com/kovey/kow/serv"
 )
@@ -182,6 +183,7 @@ func (s *server) Shutdown(a app.AppInterface) error {
 		debug.Erro("engine shutdown failure, error: %s", err)
 	}
 
+	funnel.Close()
 	if s.e != nil {
 		s.e.OnShutdown()
 	}

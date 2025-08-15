@@ -8,6 +8,7 @@ import (
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/controller"
+	"github.com/kovey/kow/funnel"
 	"github.com/kovey/kow/middleware"
 	"github.com/kovey/kow/router"
 	"github.com/kovey/kow/serv"
@@ -96,6 +97,11 @@ func OpenCors(headers ...string) {
 	engine.routers.HandleOPTIONS = true
 	engine.routers.GlobalOPTIONS = router.NewChain(controller.NewOptions())
 	engine.Middleware(&middleware.OpenCors{Headers: headers})
+}
+
+func OpenFunnel(maxCount int) {
+	funnel.Open(maxCount)
+	engine.Middleware(&middleware.CurrentLimiting{})
 }
 
 func Middleware(m ...context.MiddlewareInterface) {
