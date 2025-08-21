@@ -28,6 +28,8 @@ func (f *funnel) close() {
 
 func (f *funnel) _begin() {
 	defer f.wait.Done()
+	defer f.ticker.Stop()
+
 	for {
 		select {
 		case <-f.ticker.C:
@@ -71,6 +73,7 @@ func Close() {
 	}
 
 	fu.close()
+	fu.wait.Wait()
 }
 
 func Get() {
