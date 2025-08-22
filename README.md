@@ -71,11 +71,10 @@ func (r *req_data) Clone() rule.ParamInterface {
 }
 
 func main() {
-    var reqData req_data
-    kow.GET("/demo", newTestAction()).Middleware(&test_middle{}).Data(&reqData{}).Rule("email", "email").Rule("password", "maxlen:int:20", "minlen:int:6").Rule("age", "le:int:10")
+    kow.GET("/demo", newTestAction()).Middleware(&test_middle{}).Data(&req_data{}).Rule("email", "email").Rule("password", "maxlen:int:20", "minlen:int:6").Rule("age", "le:int:10")
     group := kow.Group("group").Middleware(&test_middle1{})
-    group.POST("/post", newTestAction()).Data(&reqData).Rule("email", "email").Rule("password", "maxlen:int:20", "minlen:int:6").Rule("age", "le:int:10")
-    group.GET("/get", newTestAction()).Data(&reqData).Rule("email", "email").Rule("password", "maxlen:int:20", "minlen:int:6").Rule("age", "le:int:10")
+    group.POST("/post", newTestAction()).Data(&req_data{}).Rule("email", "email").Rule("password", "maxlen:int:20", "minlen:int:6").Rule("age", "le:int:10")
+    group.GET("/get", newTestAction()).Data(&req_data{}).Rule("email", "email").Rule("password", "maxlen:int:20", "minlen:int:6").Rule("age", "le:int:10")
     kow.Run()
 }
 ```
