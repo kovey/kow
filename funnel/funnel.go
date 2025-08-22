@@ -52,8 +52,11 @@ func (f *funnel) add() {
 }
 
 func (f *funnel) get() byte {
-	r := <-f.bucket
-	return r
+	if len(f.bucket) == 0 {
+		return 0
+	}
+
+	return <-f.bucket
 }
 
 var fu *funnel
@@ -76,10 +79,10 @@ func Close() {
 	fu.wait.Wait()
 }
 
-func Get() {
+func Get() byte {
 	if fu == nil {
-		return
+		return 1
 	}
 
-	fu.get()
+	return fu.get()
 }
