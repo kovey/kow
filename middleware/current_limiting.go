@@ -8,10 +8,15 @@ import (
 )
 
 type CurrentLimiting struct {
+	name string
+}
+
+func NewCurrentLimiting(name string) *CurrentLimiting {
+	return &CurrentLimiting{name: name}
 }
 
 func (c *CurrentLimiting) Handle(ctx *context.Context) {
-	f := funnel.Get()
+	f := funnel.Get(c.name)
 	if f == 0 {
 		ctx.Html(http.StatusServiceUnavailable, nil)
 		return

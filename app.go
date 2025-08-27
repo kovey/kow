@@ -99,9 +99,9 @@ func OpenCors(headers ...string) {
 	engine.Middleware(&middleware.OpenCors{Headers: headers})
 }
 
-func OpenFunnel(maxCount int) {
-	funnel.Open(maxCount)
-	engine.Middleware(&middleware.CurrentLimiting{})
+func OpenFunnel(maxCount int, name string, isBlock bool) {
+	funnel.Open(maxCount, name, isBlock)
+	engine.Middleware(middleware.NewCurrentLimiting(name))
 }
 
 func Middleware(m ...context.MiddlewareInterface) {

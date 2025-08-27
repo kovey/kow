@@ -11,10 +11,11 @@ type funnel struct {
 	ticker   *time.Ticker
 	wait     sync.WaitGroup
 	sig      chan bool
+	isBlock  bool
 }
 
-func newFunnel(maxCount int) *funnel {
-	return &funnel{bucket: make(chan byte, maxCount), maxCount: maxCount, ticker: time.NewTicker(1 * time.Second), wait: sync.WaitGroup{}, sig: make(chan bool, 1)}
+func newFunnel(maxCount int, isBlock bool) *funnel {
+	return &funnel{bucket: make(chan byte, maxCount), maxCount: maxCount, ticker: time.NewTicker(1 * time.Second), wait: sync.WaitGroup{}, sig: make(chan bool, 1), isBlock: isBlock}
 }
 
 func (f *funnel) begin() {
@@ -47,42 +48,23 @@ func (f *funnel) add() {
 	}
 
 	for i := 0; i < sub; i++ {
-		f.bucket <- 1
+		select {
+		case f.bucket <- 1:
+		default:
+			return
+		}
 	}
 }
 
 func (f *funnel) get() byte {
-	if len(f.bucket) == 0 {
+	if f.isBlock {
+		return <-f.bucket
+	}
+
+	select {
+	case b := <-f.bucket:
+		return b
+	default:
 		return 0
 	}
-
-	return <-f.bucket
-}
-
-var fu *funnel
-
-func Open(maxCount int) {
-	if fu != nil {
-		return
-	}
-
-	fu = newFunnel(maxCount)
-	fu.begin()
-}
-
-func Close() {
-	if fu == nil {
-		return
-	}
-
-	fu.close()
-	fu.wait.Wait()
-}
-
-func Get() byte {
-	if fu == nil {
-		return 1
-	}
-
-	return fu.get()
 }
