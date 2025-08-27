@@ -15,7 +15,7 @@ type funnel struct {
 }
 
 func newFunnel(maxCount int, isBlock bool) *funnel {
-	return &funnel{bucket: make(chan byte, maxCount), maxCount: maxCount, ticker: time.NewTicker(1 * time.Second), wait: sync.WaitGroup{}, sig: make(chan bool, 1), isBlock: isBlock}
+	return &funnel{bucket: make(chan byte, maxCount/10), maxCount: maxCount / 10, ticker: time.NewTicker(100 * time.Millisecond), wait: sync.WaitGroup{}, sig: make(chan bool, 1), isBlock: isBlock}
 }
 
 func (f *funnel) begin() {
