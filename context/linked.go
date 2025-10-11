@@ -63,13 +63,10 @@ func (l *Linked[T]) Range(f func(k T)) {
 
 func (l *Linked[T]) Values() []T {
 	values := make([]T, l.h)
-	var next = l
 	index := 0
-	for next != nil {
-		values[index] = next.K
+	l.Range(func(k T) {
+		values[index] = k
 		index++
-		next = next.Next
-	}
-
+	})
 	return values
 }
