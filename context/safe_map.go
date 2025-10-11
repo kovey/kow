@@ -7,6 +7,7 @@ import (
 type SafeMap[K comparable, V any] struct {
 	data   map[K]V
 	locker sync.RWMutex
+	keys   *Linked[K]
 }
 
 func NewSafeMap[K comparable, V any]() *SafeMap[K, V] {
@@ -27,13 +28,25 @@ func (s *SafeMap[K, V]) Get(key K) V {
 
 func (s *SafeMap[K, V]) Add(key K, val V) {
 	s.locker.Lock()
+	if _, ok := s.data[key]; !ok {
+		if s.keys == nil {
+			s.keys = NewLinked(key)
+		} else {
+			s.keys.Add(key)
+		}
+	}
 	s.data[key] = val
 	s.locker.Unlock()
 }
 
 func (s *SafeMap[K, V]) Rem(key K) {
+	if !s.Exists(key) {
+		return
+	}
+
 	s.locker.Lock()
 	delete(s.data, key)
+	s.keys.Rem(key)
 	s.locker.Unlock()
 }
 
@@ -57,10 +70,12 @@ func (s *SafeMap[K, V]) Range(f func(key K, val V) bool) {
 	for key, val := range s.data {
 		tmp[key] = val
 	}
+	keys := make([]K, s.keys.Len())
+	copy(keys, s.keys.Values())
 	s.locker.RUnlock()
 
-	for key, val := range tmp {
-		if f(key, val) {
+	for _, key := range keys {
+		if f(key, tmp[key]) {
 			break
 		}
 	}
