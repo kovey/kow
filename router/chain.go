@@ -39,7 +39,7 @@ func (c *Chain) handle(ct *context.Context) {
 	}
 	ct.SetAction(c.Action)
 	ct.Middleware(c.Middlewares...)
-	ct.MiddlerwareStart()
+	ct.Next()
 }
 
 func (c *Chain) file(ct *context.Context) {

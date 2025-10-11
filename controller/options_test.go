@@ -20,7 +20,7 @@ func TestOptions(t *testing.T) {
 	defer pc.Drop()
 	ac := &context.Action{}
 	ctx.SetAction(ac.WithAction(NewOptions()))
-	ctx.MiddlerwareStart()
+	ctx.Next()
 	result := w.Result()
 	assert.Equal(t, "202 Accepted", result.Status)
 	assert.Equal(t, 202, result.StatusCode)

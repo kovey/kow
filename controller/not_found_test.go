@@ -20,7 +20,7 @@ func TestNotFound(t *testing.T) {
 	defer pc.Drop()
 	ac := &context.Action{}
 	ctx.SetAction(ac.WithAction(NewNotFound()))
-	ctx.MiddlerwareStart()
+	ctx.Next()
 	result := w.Result()
 	assert.Equal(t, "404 Not Found", result.Status)
 	assert.Equal(t, 404, result.StatusCode)

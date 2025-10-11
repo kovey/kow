@@ -81,7 +81,7 @@ func TestValidatorForm(t *testing.T) {
 	ctx.ReqData = &req_data{}
 	ctx.Middleware(NewParseRequestData(), NewValidator())
 	ctx.SetAction(newTestActionValid(context.Content_Type_Form))
-	ctx.MiddlerwareStart()
+	ctx.Next()
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
@@ -105,7 +105,7 @@ func TestValidatorFormFailure(t *testing.T) {
 	ctx.ReqData = &req_data{}
 	ctx.Middleware(NewParseRequestData(), NewValidator())
 	ctx.SetAction(newTestActionValid(context.Content_Type_Form))
-	ctx.MiddlerwareStart()
+	ctx.Next()
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
@@ -129,7 +129,7 @@ func TestValidatorJson(t *testing.T) {
 	ctx.ReqData = &req_data{}
 	ctx.Middleware(NewParseRequestData(), NewValidator())
 	ctx.SetAction(newTestActionValid(context.Content_Type_Json))
-	ctx.MiddlerwareStart()
+	ctx.Next()
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
@@ -153,7 +153,7 @@ func TestValidatorJsonFailure(t *testing.T) {
 	ctx.ReqData = &req_data{}
 	ctx.Middleware(NewParseRequestData(), NewValidator())
 	ctx.SetAction(newTestActionValid(context.Content_Type_Json))
-	ctx.MiddlerwareStart()
+	ctx.Next()
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
@@ -177,7 +177,7 @@ func TestValidatorXml(t *testing.T) {
 	ctx.ReqData = &req_data{}
 	ctx.Middleware(NewParseRequestData(), NewValidator())
 	ctx.SetAction(newTestActionValid(context.Content_Type_Xml))
-	ctx.MiddlerwareStart()
+	ctx.Next()
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
@@ -201,7 +201,7 @@ func TestValidatorXmlFailure(t *testing.T) {
 	ctx.ReqData = &req_data{}
 	ctx.Middleware(NewParseRequestData(), NewValidator())
 	ctx.SetAction(newTestActionValid(context.Content_Type_Xml))
-	ctx.MiddlerwareStart()
+	ctx.Next()
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)

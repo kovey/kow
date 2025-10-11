@@ -22,7 +22,7 @@ func TestOpenCors(t *testing.T) {
 	ctx.Middleware(&OpenCors{Headers: []string{"Access-Token"}})
 	ac := &context.Action{}
 	ctx.SetAction(ac.WithAction(controller.NewNotFound()))
-	ctx.MiddlerwareStart()
+	ctx.Next()
 	result := w.Result()
 	assert.Equal(t, "404 Not Found", result.Status)
 	assert.Equal(t, 404, result.StatusCode)

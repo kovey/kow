@@ -209,17 +209,6 @@ func (c *Context) Reset() {
 	}
 }
 
-func (c *Context) MiddlerwareStart() {
-	if len(c.middlewares) == 0 {
-		c.action()
-		return
-	}
-
-	m := c.middlewares[0]
-	c.middlewareIndex++
-	m.Handle(c)
-}
-
 func (c *Context) action() {
 	if c.ac == nil {
 		return

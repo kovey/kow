@@ -41,7 +41,7 @@ func TestParseRequestData(t *testing.T) {
 	ctx.ReqData = &req_data{}
 	ctx.Middleware(NewParseRequestData())
 	ctx.SetAction(newTestActionValid(context.Content_Type_Json))
-	ctx.MiddlerwareStart()
+	ctx.Next()
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
@@ -65,7 +65,7 @@ func TestParseRequestDataErr(t *testing.T) {
 	ctx.Rules.Add("age", "gt:int:0", "le:int:120")
 	ctx.Middleware(NewParseRequestData(), NewValidator())
 	ctx.SetAction(newTestActionValid(context.Content_Type_Json))
-	ctx.MiddlerwareStart()
+	ctx.Next()
 	result := w.Result()
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)

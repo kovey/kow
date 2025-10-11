@@ -22,7 +22,7 @@ func TestMatchedRoute(t *testing.T) {
 	ctx.Middleware(NewSaveMatchedRoute("index"))
 	ac := &context.Action{}
 	ctx.SetAction(ac.WithAction(controller.NewNotFound()))
-	ctx.MiddlerwareStart()
+	ctx.Next()
 	result := w.Result()
 	assert.Equal(t, "404 Not Found", result.Status)
 	assert.Equal(t, 404, result.StatusCode)
