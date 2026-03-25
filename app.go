@@ -125,3 +125,7 @@ func SetNotFound(act context.ActionInterface) {
 	ac := &context.Action{}
 	engine.routers.NotFound.Action = ac.WithAction(act)
 }
+
+func File(path string, fs http.FileSystem, handle context.ActionInterface) *router.Chain {
+	return engine.File(path, fs, handle)
+}

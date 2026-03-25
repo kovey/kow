@@ -91,6 +91,12 @@ func (e *Engine) Router(ro router.RouterInterface) {
 	e.routers.Add(ro)
 }
 
+func (e *Engine) File(path string, fs http.FileSystem, handle context.ActionInterface) *router.Chain {
+	chain := router.NewChain(handle)
+	e.routers.ServeFiles(path, fs, chain)
+	return chain
+}
+
 func (e *Engine) Middleware(middlewars ...context.MiddlewareInterface) {
 	e.routers.Middlerware(middlewars...)
 }
