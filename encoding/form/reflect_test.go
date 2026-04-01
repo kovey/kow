@@ -7,40 +7,54 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type testCustum int64
+
+func (t *testCustum) UnmarshalFORM(value string) error {
+	if value == "custom" {
+		*t = 1
+		return nil
+	}
+
+	*t = -1
+	return nil
+}
+
 type test_ref struct {
-	Name     string    `form:"name"`
-	Id       int64     `form:"id"`
-	Sex      int8      `form:"sex"`
-	Age      int16     `form:"age"`
-	Chips    int32     `form:"chips"`
-	TdCount  int       `form:"td_count"`
-	Uid      uint64    `form:"uid"`
-	USex     uint8     `form:"usex"`
-	UAge     uint16    `form:"uage"`
-	UChips   uint32    `form:"uchips"`
-	UTdCount uint      `form:"utd_count"`
-	Bool     bool      `form:"bool"`
-	Float32  float32   `form:"float32"`
-	Float64  float64   `form:"float64"`
-	Date     time.Time `form:"date"`
+	Name     string     `form:"name"`
+	Id       int64      `form:"id"`
+	Sex      int8       `form:"sex"`
+	Age      int16      `form:"age"`
+	Chips    int32      `form:"chips"`
+	TdCount  int        `form:"td_count"`
+	Uid      uint64     `form:"uid"`
+	USex     uint8      `form:"usex"`
+	UAge     uint16     `form:"uage"`
+	UChips   uint32     `form:"uchips"`
+	UTdCount uint       `form:"utd_count"`
+	Bool     bool       `form:"bool"`
+	Float32  float32    `form:"float32"`
+	Float64  float64    `form:"float64"`
+	Date     time.Time  `form:"date"`
+	Custom   testCustum `form:"custom"`
 }
 
 type test_ref_arr struct {
-	Name     []string    `form:"name"`
-	Id       []int64     `form:"id"`
-	Sex      []int8      `form:"sex"`
-	Age      []int16     `form:"age"`
-	Chips    []int32     `form:"chips"`
-	TdCount  []int       `form:"td_count"`
-	Uid      []uint64    `form:"uid"`
-	USex     []uint8     `form:"usex"`
-	UAge     []uint16    `form:"uage"`
-	UChips   []uint32    `form:"uchips"`
-	UTdCount []uint      `form:"utd_count"`
-	Bool     []bool      `form:"bool"`
-	Float32  []float32   `form:"float32"`
-	Float64  []float64   `form:"float64"`
-	Date     []time.Time `form:"date"`
+	Name     []string     `form:"name"`
+	Id       []int64      `form:"id"`
+	Sex      []int8       `form:"sex"`
+	Age      []int16      `form:"age"`
+	Chips    []int32      `form:"chips"`
+	TdCount  []int        `form:"td_count"`
+	Uid      []uint64     `form:"uid"`
+	USex     []uint8      `form:"usex"`
+	UAge     []uint16     `form:"uage"`
+	UChips   []uint32     `form:"uchips"`
+	UTdCount []uint       `form:"utd_count"`
+	Bool     []bool       `form:"bool"`
+	Float32  []float32    `form:"float32"`
+	Float64  []float64    `form:"float64"`
+	Date     []time.Time  `form:"date"`
+	Custom   []testCustum `form:"custom"`
 }
 
 func _getTestData() map[string][]string {
@@ -59,7 +73,8 @@ func _getTestData() map[string][]string {
 	data["bool"] = []string{"true"}                // bool
 	data["float32"] = []string{"10000.11"}         // float32
 	data["float64"] = []string{"10000.11"}         // float64
-	data["date"] = []string{"2025-04-11 11:11:11"} // float64
+	data["date"] = []string{"2025-04-11 11:11:11"} // date
+	data["custom"] = []string{"custom"}            // custom
 
 	return data
 }
@@ -85,6 +100,7 @@ func TestUnmarshal(t *testing.T) {
 	assert.Equal(t, float32(10000.11), tData.Float32)
 	assert.Equal(t, float64(10000.11), tData.Float64)
 	assert.Equal(t, "2025-04-11 11:11:11", tData.Date.Format(time.DateTime))
+	assert.Equal(t, testCustum(1), tData.Custom)
 }
 
 func TestUnmarshalArr(t *testing.T) {
@@ -108,6 +124,7 @@ func TestUnmarshalArr(t *testing.T) {
 	assert.Equal(t, float32(10000.11), tData.Float32[0])
 	assert.Equal(t, float64(10000.11), tData.Float64[0])
 	assert.Equal(t, "2025-04-11 11:11:11", tData.Date[0].Format(time.DateTime))
+	assert.Equal(t, testCustum(1), tData.Custom[0])
 }
 
 func TestMarshalArr(t *testing.T) {
@@ -119,7 +136,7 @@ func TestMarshalArr(t *testing.T) {
 
 	buf, err := Marshal(tData)
 	assert.Nil(t, err)
-	assert.Equal(t, "name[]=kovey&id[]=1&sex[]=1&age[]=18&chips[]=100&td_count[]=10000&uid[]=1&usex[]=1&uage[]=18&uchips[]=100&utd_count[]=10000&bool[]=true&float32[]=10000.11035&float64[]=10000.11&date[]=2025-04-11 11:11:11", string(buf))
+	assert.Equal(t, "name[]=kovey&id[]=1&sex[]=1&age[]=18&chips[]=100&td_count[]=10000&uid[]=1&usex[]=1&uage[]=18&uchips[]=100&utd_count[]=10000&bool[]=true&float32[]=10000.11035&float64[]=10000.11&date[]=2025-04-11 11:11:11&custom[]=1", string(buf))
 }
 
 func TestMarshal(t *testing.T) {
@@ -131,5 +148,5 @@ func TestMarshal(t *testing.T) {
 
 	buf, err := Marshal(tData)
 	assert.Nil(t, err)
-	assert.Equal(t, "name=kovey&id=1&sex=1&age=18&chips=100&td_count=10000&uid=1&usex=1&uage=18&uchips=100&utd_count=10000&bool=true&float32=10000.11035&float64=10000.11&date=2025-04-11 11:11:11", string(buf))
+	assert.Equal(t, "name=kovey&id=1&sex=1&age=18&chips=100&td_count=10000&uid=1&usex=1&uage=18&uchips=100&utd_count=10000&bool=true&float32=10000.11035&float64=10000.11&date=2025-04-11 11:11:11&custom=1", string(buf))
 }

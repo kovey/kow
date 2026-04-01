@@ -34,6 +34,13 @@ func (f *Reflect) _parse(data map[string][]string, val any) error {
 
 		vField := v.Field(i)
 		orData := dt[0]
+		if tmp, ok := vField.Addr().Interface().(Unmarshaler); ok {
+			if err := tmp.UnmarshalFORM(orData); err != nil {
+				return err
+			}
+			continue
+		}
+
 		if _, ok := vField.Interface().(time.Time); ok {
 			tmpTime, err := time.Parse(time.DateTime, orData)
 			if err != nil {
@@ -41,7 +48,9 @@ func (f *Reflect) _parse(data map[string][]string, val any) error {
 			}
 
 			vField.Set(reflect.ValueOf(tmpTime))
+			continue
 		}
+
 		switch field.Type.Kind() {
 		case reflect.String:
 			vField.Set(reflect.ValueOf(orData))
@@ -147,6 +156,18 @@ func (f *Reflect) _parse(data map[string][]string, val any) error {
 
 					vField.Set(reflect.Append(vField, reflect.ValueOf(tmpTime)))
 				}
+				break
+			}
+			if _, ok := vTypeValue.Addr().Interface().(Unmarshaler); ok {
+				for _, orData := range dt {
+					tmp := reflect.New(vTypeValue.Type()).Interface().(Unmarshaler)
+					if err := tmp.UnmarshalFORM(orData); err != nil {
+						return err
+					}
+
+					vField.Set(reflect.Append(vField, reflect.ValueOf(tmp).Elem()))
+				}
+				break
 			}
 			switch field.Type.Elem().Kind() {
 			case reflect.String:

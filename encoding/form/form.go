@@ -1,6 +1,12 @@
 package form
 
-import "reflect"
+import (
+	"reflect"
+)
+
+type Unmarshaler interface {
+	UnmarshalFORM(formData string) error
+}
 
 var Marshal func(v any) ([]byte, error) = formMarshal
 var Unmarshal func(data map[string][]string, v any) error = formUnmarshal
