@@ -1,6 +1,7 @@
 package kow
 
 import (
+	c "context"
 	"net/http"
 	"time"
 
@@ -99,8 +100,8 @@ func OpenCors(headers ...string) {
 	engine.Middleware(&middleware.OpenCors{Headers: headers})
 }
 
-func OpenFunnel(maxCount int, name string, isBlock bool) {
-	funnel.Open(maxCount, name, isBlock)
+func OpenFunnel(ctx c.Context, maxCount int, name string, isBlock bool) {
+	funnel.Open(ctx, maxCount, name, isBlock)
 	engine.Middleware(middleware.NewCurrentLimiting(name))
 }
 

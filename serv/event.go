@@ -11,8 +11,7 @@ type EventInterface interface {
 	OnFlag(app.AppInterface) error
 	OnBefore(app.AppInterface) error
 	OnAfter(app.AppInterface) error
-	OnRun() error
-	OnShutdown()
+	OnRun(app.AppInterface) error
 	CreateConfig(path string) error
 	Usage() bool
 	SetName(name string)
@@ -37,11 +36,8 @@ func (s *EventBase) OnAfter(app.AppInterface) error {
 	return nil
 }
 
-func (s *EventBase) OnRun() error {
+func (s *EventBase) OnRun(app.AppInterface) error {
 	return nil
-}
-
-func (s *EventBase) OnShutdown() {
 }
 
 func (s *EventBase) CreateConfig(app.AppInterface) error {

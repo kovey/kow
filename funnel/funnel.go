@@ -1,7 +1,7 @@
 package funnel
 
 import (
-	"sync"
+	"context"
 	"time"
 )
 
@@ -9,33 +9,25 @@ type funnel struct {
 	bucket   chan byte
 	maxCount int
 	ticker   *time.Ticker
-	wait     sync.WaitGroup
-	sig      chan bool
 	isBlock  bool
 }
 
 func newFunnel(maxCount int, isBlock bool) *funnel {
-	return &funnel{bucket: make(chan byte, maxCount/10), maxCount: maxCount / 10, ticker: time.NewTicker(100 * time.Millisecond), wait: sync.WaitGroup{}, sig: make(chan bool, 1), isBlock: isBlock}
+	return &funnel{bucket: make(chan byte, maxCount/10), maxCount: maxCount / 10, ticker: time.NewTicker(100 * time.Millisecond), isBlock: isBlock}
 }
 
-func (f *funnel) begin() {
-	f.wait.Add(1)
-	go f._begin()
+func (f *funnel) begin(ctx context.Context) {
+	go f._begin(ctx)
 }
 
-func (f *funnel) close() {
-	f.sig <- true
-}
-
-func (f *funnel) _begin() {
-	defer f.wait.Done()
+func (f *funnel) _begin(ctx context.Context) {
 	defer f.ticker.Stop()
 
 	for {
 		select {
 		case <-f.ticker.C:
 			f.add()
-		case <-f.sig:
+		case <-ctx.Done():
 			return
 		}
 	}

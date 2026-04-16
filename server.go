@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"sync"
 	"time"
 
 	_ "net/http/pprof"
@@ -16,7 +15,6 @@ import (
 	"github.com/kovey/cli-go/util"
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/discovery/etcd"
-	"github.com/kovey/kow/funnel"
 	"github.com/kovey/kow/resolver"
 	"github.com/kovey/kow/serv"
 )
@@ -30,13 +28,12 @@ var engine = NewDefault()
 
 type server struct {
 	*app.ServBase
-	wait  sync.WaitGroup
 	e     serv.EventInterface
 	pprof *http.Server
 }
 
 func newServer(e serv.EventInterface) *server {
-	return &server{wait: sync.WaitGroup{}, e: e, ServBase: &app.ServBase{}}
+	return &server{e: e, ServBase: &app.ServBase{}}
 }
 
 func (s *server) Flag(a app.AppInterface) error {
@@ -67,8 +64,7 @@ func (s *server) Init(a app.AppInterface) error {
 	return nil
 }
 
-func (s *server) runMonitor() {
-	defer s.wait.Done()
+func (s *server) runMonitor(a app.AppInterface) {
 	if ppOpen, err := env.GetBool(APP_PPROF_OPEN); err != nil || !ppOpen {
 		return
 	}
@@ -85,13 +81,12 @@ func (s *server) runMonitor() {
 	}
 }
 
-func (s *server) runOhter() {
-	defer s.wait.Done()
+func (s *server) runOhter(a app.AppInterface) {
 	if s.e == nil {
 		return
 	}
 
-	if err := s.e.OnRun(); err != nil {
+	if err := s.e.OnRun(a); err != nil {
 		debug.Erro("event.OnRun failure, error: %s", err)
 	}
 }
@@ -128,18 +123,22 @@ func (s *server) start(a app.AppInterface) error {
 		}
 	}
 
-	s.wait.Add(1)
-	go s.runMonitor()
-	s.wait.Add(1)
-	go s.runOhter()
+	a.RunChild(s.runMonitor)
+	s.runOhter(a)
+	a.RunChild(s.listen)
 
 	debug.Info("app[%s] listen on [%s:%s]", a.Name(), os.Getenv(SERV_HOST), os.Getenv(SERV_PORT))
 	if err := engine.Run(fmt.Sprintf("%s:%s", os.Getenv(SERV_HOST), os.Getenv(SERV_PORT))); err != nil {
 		debug.Erro(err.Error())
-		s.Shutdown(a)
 		return app.Err_Not_Restart
 	}
 	return nil
+}
+
+func (s *server) listen(a app.AppInterface) {
+	ctx := a.Context()
+	<-ctx.Done()
+	s.shutdown()
 }
 
 func (s *server) Usage() {
@@ -172,7 +171,7 @@ func (s *server) Run(a app.AppInterface) error {
 	return nil
 }
 
-func (s *server) Shutdown(a app.AppInterface) error {
+func (s *server) shutdown() {
 	if s.pprof != nil {
 		if err := s.pprof.Shutdown(context.Background()); err != nil {
 			debug.Erro("shutdown pprof failure, error: %s", err)
@@ -183,16 +182,9 @@ func (s *server) Shutdown(a app.AppInterface) error {
 		debug.Erro("engine shutdown failure, error: %s", err)
 	}
 
-	funnel.Close()
-	if s.e != nil {
-		s.e.OnShutdown()
-	}
-
 	if etcdOpen, err := env.GetBool(APP_ETCD_OPEN); err == nil && etcdOpen {
 		resolver.Shutdown()
 	}
-	s.wait.Wait()
-	return nil
 }
 
 func (s *server) Version() string {
