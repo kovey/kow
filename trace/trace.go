@@ -6,6 +6,8 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/kovey/kow/trace/feistel"
 )
 
 var bits = []byte{
@@ -21,6 +23,11 @@ var bitmap = map[byte]byte{
 }
 
 var r = rand.New(rand.NewSource(time.Now().UnixNano()))
+var f *feistel.Feistel
+
+func InitFeistel(key string) {
+	f = feistel.NewFeistel([]byte(key))
+}
 
 func _encode(data uint32) []byte {
 	var result = []byte{bits[0], bits[0], bits[0], bits[0], bits[0], bits[0], bits[0]}
@@ -86,6 +93,9 @@ func Decode(data []byte) int64 {
 }
 
 func TraceId(prefix int64) string {
+	if f != nil {
+		prefix = int64(f.Encrypt(uint64(prefix)))
+	}
 	var builder strings.Builder
 	builder.Write(Encode(prefix))
 	builder.WriteByte('-')
