@@ -1,8 +1,9 @@
 package context
 
 import (
-	"github.com/kovey/discovery/krpc"
 	"github.com/kovey/kow/view"
+
+	"github.com/kovey/discovery/krpc"
 	"google.golang.org/grpc"
 )
 

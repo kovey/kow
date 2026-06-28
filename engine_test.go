@@ -7,8 +7,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
+
+	"github.com/kovey/debug-go/debug"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,7 +25,7 @@ func TestEngineGet(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -40,7 +41,7 @@ func TestEnginePost(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -56,7 +57,7 @@ func TestEnginePut(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -72,7 +73,7 @@ func TestEnginePatch(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -88,7 +89,7 @@ func TestEngineHead(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -104,7 +105,7 @@ func TestEngineDelete(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -120,7 +121,7 @@ func TestEngineConnect(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -136,7 +137,7 @@ func TestEngineOptions(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -152,7 +153,7 @@ func TestEngineTrace(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))

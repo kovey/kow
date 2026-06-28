@@ -26,7 +26,7 @@ func TestOpenCors(t *testing.T) {
 	result := w.Result()
 	assert.Equal(t, "404 Not Found", result.Status)
 	assert.Equal(t, 404, result.StatusCode)
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, "404 page not found\n", string(body))

@@ -9,12 +9,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kovey/debug-go/debug"
-	"github.com/kovey/discovery/krpc"
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/controller"
 	"github.com/kovey/kow/validator/rule"
 	"github.com/kovey/kow/view"
+
+	"github.com/kovey/debug-go/debug"
+	"github.com/kovey/discovery/krpc"
 	"github.com/kovey/pool"
 	"github.com/stretchr/testify/assert"
 )
@@ -85,7 +86,7 @@ func TestAppGet(t *testing.T) {
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
 	assert.Equal(t, "*", result.Header.Get("Access-Control-Allow-Origin"))
 	assert.Equal(t, "content-type,Access-Token", result.Header.Get("Access-Control-Allow-Headers"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -102,7 +103,7 @@ func TestAppPost(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -118,7 +119,7 @@ func TestAppPut(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -134,7 +135,7 @@ func TestAppPatch(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -150,7 +151,7 @@ func TestAppHead(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -166,7 +167,7 @@ func TestAppDelete(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -182,7 +183,7 @@ func TestAppConnect(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -199,7 +200,7 @@ func TestAppGlobalOptions(t *testing.T) {
 	assert.Equal(t, "202 Accepted", result.Status)
 	assert.Equal(t, 202, result.StatusCode)
 	assert.Equal(t, "text/html", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, "", string(body))
@@ -215,7 +216,7 @@ func TestAppGlobalNotFound(t *testing.T) {
 	assert.Equal(t, "404 Not Found", result.Status)
 	assert.Equal(t, 404, result.StatusCode)
 	assert.Equal(t, "text/plain; charset=utf-8", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, "404 page not found\n", string(body))
@@ -233,7 +234,7 @@ func TestAppOptions(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))
@@ -249,7 +250,7 @@ func TestAppTrace(t *testing.T) {
 	assert.Equal(t, "200 OK", result.Status)
 	assert.Equal(t, 200, result.StatusCode)
 	assert.Equal(t, "application/json", result.Header.Get("Content-Type"))
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, `{"email":"test_middle_run","password":"123456","age":18}`, string(body))

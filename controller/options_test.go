@@ -24,7 +24,7 @@ func TestOptions(t *testing.T) {
 	result := w.Result()
 	assert.Equal(t, "202 Accepted", result.Status)
 	assert.Equal(t, 202, result.StatusCode)
-	defer result.Body.Close()
+	defer func() { _ = result.Body.Close() }()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
 	assert.Equal(t, "", string(body))
