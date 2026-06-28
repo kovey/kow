@@ -12,7 +12,7 @@ type Params map[string]string
 const MatchedRoutePathParam = "$matchedRoutePath"
 
 func (p Params) String() string {
-	if p == nil || len(p) == 0 {
+	if len(p) == 0 {
 		return ""
 	}
 

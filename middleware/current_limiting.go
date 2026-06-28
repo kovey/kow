@@ -18,7 +18,9 @@ func NewCurrentLimiting(name string) *CurrentLimiting {
 func (c *CurrentLimiting) Handle(ctx *context.Context) {
 	f := funnel.Get(c.name)
 	if f == 0 {
-		ctx.Html(http.StatusServiceUnavailable, nil)
+		if err := ctx.Html(http.StatusServiceUnavailable, nil); err != nil {
+			ctx.Log.Erro("%s", err)
+		}
 		return
 	}
 

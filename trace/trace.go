@@ -66,7 +66,7 @@ func _decode(data []byte) []byte {
 	for i := count; i >= 0; i-- {
 		tmp, ok := bitmap[data[i]]
 		if !ok {
-			panic(fmt.Sprintf("unkown char: %c", data[i]))
+			panic(fmt.Sprintf("unknown char: %c", data[i]))
 		}
 		num += uint32(tmp) * (1 << (5 * i))
 	}

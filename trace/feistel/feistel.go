@@ -31,7 +31,7 @@ func join(left, right uint32) uint64 {
 func (c *Feistel) roundFunction(right uint32, roundKey []byte) uint32 {
 	h := hmac.New(sha256.New, c.key)
 	h.Write(roundKey)
-	binary.Write(h, binary.BigEndian, right)
+	_ = binary.Write(h, binary.BigEndian, right)
 	sum := h.Sum(nil)
 	return binary.BigEndian.Uint32(sum[:4])
 }

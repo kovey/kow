@@ -40,6 +40,7 @@ type TraceContext struct {
 }
 
 func NewTraceContext(parent context.Context, traceId string) *TraceContext {
+	//nolint:staticcheck // krpc.Ko_Trace_Id is defined by external discovery package
 	return &TraceContext{Context: context.WithValue(parent, krpc.Ko_Trace_Id, traceId), traceId: traceId, spanId: trace.SpanId()}
 }
 

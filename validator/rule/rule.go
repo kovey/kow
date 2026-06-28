@@ -153,7 +153,7 @@ func compare(left, right any) (int, error) {
 
 		return compareBy(tmp, r), nil
 	default:
-		return 0, fmt.Errorf("unkown type")
+		return 0, fmt.Errorf("unknown type")
 	}
 }
 

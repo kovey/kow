@@ -132,14 +132,14 @@ func (f *Reflect) _parse(data map[string][]string, val any) error {
 
 			vField.Set(reflect.ValueOf(tmpVal))
 		case reflect.Float32:
-			tmpVal, err := strconv.ParseFloat(orData, 10)
+			tmpVal, err := strconv.ParseFloat(orData, 64)
 			if err != nil {
 				return err
 			}
 
 			vField.Set(reflect.ValueOf(float32(tmpVal)))
 		case reflect.Float64:
-			tmpVal, err := strconv.ParseFloat(orData, 10)
+			tmpVal, err := strconv.ParseFloat(orData, 64)
 			if err != nil {
 				return err
 			}
@@ -275,7 +275,7 @@ func (f *Reflect) _parse(data map[string][]string, val any) error {
 				}
 			case reflect.Float32:
 				for _, orData := range dt {
-					tmpVal, err := strconv.ParseFloat(orData, 10)
+					tmpVal, err := strconv.ParseFloat(orData, 64)
 					if err != nil {
 						return err
 					}
@@ -284,7 +284,7 @@ func (f *Reflect) _parse(data map[string][]string, val any) error {
 				}
 			case reflect.Float64:
 				for _, orData := range dt {
-					tmpVal, err := strconv.ParseFloat(orData, 10)
+					tmpVal, err := strconv.ParseFloat(orData, 64)
 					if err != nil {
 						return err
 					}
