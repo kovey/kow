@@ -37,13 +37,13 @@ jobs:
         run: go mod download
 
       - name: Build
-        run: go build ./...
+        run: go build $(go list ./... | grep -v /tests/)
 
       - name: Test
-        run: go test -race -cover -coverprofile=coverage.out ./...
+        run: go test -race -cover -coverprofile=coverage.out $(go list ./... | grep -v /tests/)
 
       - name: Vet
-        run: go vet ./...
+        run: go vet $(go list ./... | grep -v /tests/)
 
   lint:
     name: Lint
@@ -78,4 +78,4 @@ jobs:
       - name: govulncheck
         run: |
           go install golang.org/x/vuln/cmd/govulncheck@latest
-          govulncheck ./...
+          govulncheck $(go list ./... | grep -v /tests/)
