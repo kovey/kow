@@ -41,7 +41,7 @@ type test_file_server struct {
 func (t *test_file_server) ServeHTTP(w http.ResponseWriter, request *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Add("Content-Type", "application/octet-stream")
-	_,_ = w.Write([]byte(`{"code":0,"msg":""}`))
+	_, _ = w.Write([]byte(`{"code":0,"msg":""}`))
 }
 
 type test_action struct {

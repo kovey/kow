@@ -28,10 +28,6 @@ func (t *test_middle) Handle(ctx *context.Context) {
 	ctx.Next()
 }
 
-
-
-
-
 type test_action struct {
 }
 
