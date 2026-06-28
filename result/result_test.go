@@ -7,10 +7,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/kovey/kow/context"
-	"github.com/kovey/kow/validator/rule"
 	"github.com/kovey/pool"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/kovey/kow/context"
+	"github.com/kovey/kow/validator/rule"
 )
 
 type req_data struct {

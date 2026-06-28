@@ -8,10 +8,11 @@ import (
 
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/discovery/krpc"
-	"github.com/kovey/kow/context"
-	"github.com/kovey/kow/view"
 	"github.com/kovey/pool"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/kovey/kow/context"
+	"github.com/kovey/kow/view"
 )
 
 type test_action struct {

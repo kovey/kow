@@ -9,12 +9,13 @@ import (
 	"testing"
 
 	"github.com/kovey/discovery/krpc"
+	"github.com/kovey/pool"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/validator"
 	"github.com/kovey/kow/validator/rule"
 	"github.com/kovey/kow/view"
-	"github.com/kovey/pool"
-	"github.com/stretchr/testify/assert"
 )
 
 type test_middle struct {

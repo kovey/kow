@@ -8,9 +8,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/kovey/kow/context"
 	"github.com/kovey/pool"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/kovey/kow/context"
 )
 
 func TestGroupGet(t *testing.T) {

@@ -3,8 +3,9 @@ package validator
 import (
 	"testing"
 
-	"github.com/kovey/kow/validator/rule"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/kovey/kow/validator/rule"
 )
 
 type req_data struct {

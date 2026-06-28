@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/kovey/debug-go/debug"
+
 	"github.com/kovey/kow/validator/rule"
 )
 

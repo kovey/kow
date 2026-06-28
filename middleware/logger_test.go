@@ -7,10 +7,11 @@ import (
 	"testing"
 
 	"github.com/kovey/debug-go/debug"
-	"github.com/kovey/kow/context"
-	"github.com/kovey/kow/controller"
 	"github.com/kovey/pool"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/kovey/kow/context"
+	"github.com/kovey/kow/controller"
 )
 
 func TestLogger(t *testing.T) {

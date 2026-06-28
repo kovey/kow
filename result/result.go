@@ -3,9 +3,10 @@ package result
 import (
 	"net/http"
 
-	"github.com/kovey/kow/context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/kovey/kow/context"
 )
 
 type Codes int32

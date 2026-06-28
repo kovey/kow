@@ -6,11 +6,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/kovey/pool"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/validator"
 	"github.com/kovey/kow/validator/rule"
-	"github.com/kovey/pool"
-	"github.com/stretchr/testify/assert"
 )
 
 type req_data_parse struct {
