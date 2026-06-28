@@ -10,6 +10,7 @@ import (
 
 	"github.com/kovey/kow/encoding/form"
 	"github.com/kovey/kow/encoding/json"
+	"github.com/kovey/kow/encoding/uri"
 	"github.com/kovey/kow/encoding/xml"
 	"github.com/kovey/kow/trace"
 	"github.com/kovey/kow/validator"
@@ -357,6 +358,16 @@ func (c *Context) ParseXml(data rule.ParamInterface) error {
 	}
 
 	return xml.Unmarshal(content, data)
+}
+
+// ParseUri populates the given struct from path parameters using `uri` tags.
+// For example, with a route like /users/:id/:name and struct fields tagged
+// `uri:"id"` and `uri:"name"`, the values are automatically assigned.
+func (c *Context) ParseUri(data any) error {
+	if c.Params == nil {
+		return nil
+	}
+	return uri.Unmarshal(map[string]string(c.Params), data)
 }
 
 func (c *Context) ClientIp() string {
