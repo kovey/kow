@@ -10,6 +10,7 @@ require (
 	github.com/kovey/discovery v0.1.1
 	github.com/kovey/pool v0.0.9
 	github.com/stretchr/testify v1.8.1
+	golang.org/x/net v0.22.0
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.33.0
 )
@@ -27,7 +28,6 @@ require (
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.17.0 // indirect
-	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
 	golang.org/x/text v0.14.0 // indirect

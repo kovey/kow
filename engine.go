@@ -10,6 +10,8 @@ import (
 	"github.com/kovey/kow/middleware"
 	"github.com/kovey/kow/router"
 	"github.com/kovey/pool"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 )
 
 type Engine struct {
@@ -117,6 +119,41 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (e *Engine) Run(addr string) error {
 	e.serv = &http.Server{Addr: addr, Handler: e}
 	err := e.serv.ListenAndServe()
+	if err == http.ErrServerClosed {
+		return nil
+	}
+
+	return err
+}
+
+func (e *Engine) RunHttp2(addr string, conf *http2.Server) error {
+	h2s := conf
+	if h2s == nil {
+		h2s = &http2.Server{}
+	}
+	e.serv = &http.Server{
+		Addr:    addr,
+		Handler: h2c.NewHandler(e, h2s),
+	}
+	err := e.serv.ListenAndServe()
+	if err == http.ErrServerClosed {
+		return nil
+	}
+
+	return err
+}
+
+func (e *Engine) RunTLS(addr, certFile, keyFile string, conf *http2.Server) error {
+	e.serv = &http.Server{
+		Addr:    addr,
+		Handler: e,
+	}
+	if conf != nil {
+		if err := http2.ConfigureServer(e.serv, conf); err != nil {
+			return err
+		}
+	}
+	err := e.serv.ListenAndServeTLS(certFile, keyFile)
 	if err == http.ErrServerClosed {
 		return nil
 	}
