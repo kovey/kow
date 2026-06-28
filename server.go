@@ -10,13 +10,14 @@ import (
 
 	_ "net/http/pprof"
 
+	"github.com/kovey/kow/resolver"
+	"github.com/kovey/kow/serv"
+
 	"github.com/kovey/cli-go/app"
 	"github.com/kovey/cli-go/env"
 	"github.com/kovey/cli-go/util"
 	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/discovery/etcd"
-	"github.com/kovey/kow/resolver"
-	"github.com/kovey/kow/serv"
 )
 
 const (

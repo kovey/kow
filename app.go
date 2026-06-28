@@ -5,14 +5,15 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/kovey/cli-go/app"
-	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
 	"github.com/kovey/kow/controller"
 	"github.com/kovey/kow/funnel"
 	"github.com/kovey/kow/middleware"
 	"github.com/kovey/kow/router"
 	"github.com/kovey/kow/serv"
+
+	"github.com/kovey/cli-go/app"
+	"github.com/kovey/debug-go/debug"
 )
 
 const (
