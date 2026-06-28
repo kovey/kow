@@ -1,9 +1,10 @@
 package controller
 
 import (
+	"github.com/kovey/kow/view"
+
 	"github.com/kovey/discovery/grpc"
 	"github.com/kovey/discovery/krpc"
-	"github.com/kovey/kow/view"
 )
 
 type Base struct {

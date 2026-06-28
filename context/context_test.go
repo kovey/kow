@@ -9,9 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kovey/discovery/krpc"
 	"github.com/kovey/kow/validator/rule"
 	"github.com/kovey/kow/view"
+
+	"github.com/kovey/discovery/krpc"
 	"github.com/kovey/pool"
 	"github.com/stretchr/testify/assert"
 )
