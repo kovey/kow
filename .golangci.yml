@@ -1,5 +1,4 @@
-run:
-  timeout: 5m
+version: "2"
 
 linters:
   enable:
@@ -15,21 +14,14 @@ linters:
     - unconvert
     - nilerr
     - prealloc
-    - reassign
 
-linters-settings:
-  misspell:
-    locale: US
-  goimports:
-    local-prefixes: github.com/kovey/kow
-  prealloc:
-    simple: true
-    for-loops: true
+  settings:
+    misspell:
+      locale: US
+    goimports:
+      local-prefixes: github.com/kovey/kow
 
-issues:
-  exclude-dirs:
-    - tests
-    - vendor
-  exclude-files:
-    - ".*_test\\.go$"
-    - "tests/.*"
+  exclusions:
+    paths:
+      - tests
+      - vendor
