@@ -124,16 +124,6 @@ func (e *Engine) Run(addr string) error {
 	return err
 }
 
-func (e *Engine) RunHttp2(addr string, http2Config *http.HTTP2Config) error {
-	e.serv = &http.Server{Addr: addr, Handler: e, HTTP2: http2Config}
-	err := e.serv.ListenAndServe()
-	if err == http.ErrServerClosed {
-		return nil
-	}
-
-	return err
-}
-
 func (e *Engine) Shutdown() error {
 	if e.serv == nil {
 		return nil
