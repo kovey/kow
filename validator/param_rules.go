@@ -143,7 +143,7 @@ func parseRule(ru string) *rule.Rule {
 					debug.Erro("rule[%s] params[%d] value[%s] is not[%s]", info[0], i, p, info[2])
 					return nil
 				}
-				tmp[i] = int8(pa)
+				tmp[i] = uint8(pa)
 			}
 		case "uint16":
 			for i, p := range params {
@@ -152,7 +152,7 @@ func parseRule(ru string) *rule.Rule {
 					debug.Erro("rule[%s] params[%d] value[%s] is not[%s]", info[0], i, p, info[2])
 					return nil
 				}
-				tmp[i] = int16(pa)
+				tmp[i] = uint16(pa)
 			}
 		case "uint32":
 			for i, p := range params {
@@ -161,7 +161,7 @@ func parseRule(ru string) *rule.Rule {
 					debug.Erro("rule[%s] params[%d] value[%s] is not[%s]", info[0], i, p, info[2])
 					return nil
 				}
-				tmp[i] = int32(pa)
+				tmp[i] = uint32(pa)
 			}
 		case "uint64":
 			for i, p := range params {

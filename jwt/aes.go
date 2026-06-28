@@ -12,9 +12,12 @@ import (
 )
 
 func Encrypt(key string, data string) (string, error) {
-	res, err := base64.StdEncoding.DecodeString(key + "=")
+	res, err := base64.RawStdEncoding.DecodeString(key)
 	if err != nil {
-		return "", err
+		res, err = base64.StdEncoding.DecodeString(key + "=")
+		if err != nil {
+			return "", err
+		}
 	}
 	block, err := aes.NewCipher(res)
 	if err != nil {
@@ -32,10 +35,13 @@ func Encrypt(key string, data string) (string, error) {
 }
 
 func Decrypt(key, data string) (string, error) {
-	res, err := base64.StdEncoding.DecodeString(key + "=")
+	res, err := base64.RawStdEncoding.DecodeString(key)
 	if err != nil {
-		debug.Erro("base64 decode key[%s] failure, error: %s", key, err)
-		return "", err
+		res, err = base64.StdEncoding.DecodeString(key + "=")
+		if err != nil {
+			debug.Erro("base64 decode key[%s] failure, error: %s", key, err)
+			return "", err
+		}
 	}
 	tmp, err := base64.RawURLEncoding.DecodeString(data)
 	if err != nil {
@@ -77,6 +83,9 @@ func pkcs7Padding(ciphertext []byte, blocksize int) []byte {
 
 func pkcs7UnPadding(origData []byte) []byte {
 	length := len(origData)
+	if length == 0 {
+		return nil
+	}
 	unpadding := int(origData[length-1])
 	if length <= unpadding {
 		return nil

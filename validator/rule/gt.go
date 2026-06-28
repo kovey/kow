@@ -30,7 +30,7 @@ func (g *Gt) Valid(key string, val any, params ...any) (bool, error) {
 
 	rr := res == 1
 	if !rr {
-		return false, fmt.Errorf("value[%v] of field[%s] not greather than value[%v]", val, key, params[0])
+		return false, fmt.Errorf("value[%v] of field[%s] not greater than value[%v]", val, key, params[0])
 	}
 
 	return rr, nil

@@ -13,7 +13,11 @@ type funnel struct {
 }
 
 func newFunnel(maxCount int, isBlock bool) *funnel {
-	return &funnel{bucket: make(chan byte, maxCount/10), maxCount: maxCount / 10, ticker: time.NewTicker(100 * time.Millisecond), isBlock: isBlock}
+	capacity := maxCount / 10
+	if capacity < 1 {
+		capacity = 1
+	}
+	return &funnel{bucket: make(chan byte, capacity), maxCount: maxCount, ticker: time.NewTicker(100 * time.Millisecond), isBlock: isBlock}
 }
 
 func (f *funnel) begin(ctx context.Context) {

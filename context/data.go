@@ -26,6 +26,7 @@ func (p Params) String() string {
 		builder.WriteString(key)
 		builder.WriteByte('=')
 		builder.WriteString(val)
+		index++
 	}
 
 	return builder.String()
