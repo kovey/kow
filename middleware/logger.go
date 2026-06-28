@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/kovey/debug-go/debug"
 	"github.com/kovey/kow/context"
+
+	"github.com/kovey/debug-go/debug"
 )
 
 type Logger struct {

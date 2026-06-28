@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/kovey/kow/context"
+
 	"github.com/kovey/pool"
 	"github.com/stretchr/testify/assert"
 )
