@@ -390,6 +390,57 @@ kow.GET("/rate-limited", action).
 
 The funnel uses a token-bucket algorithm with 100ms refill ticks. Bucket capacity is `maxCount / 10`.
 
+### gRPC mTLS
+
+Configure mutual TLS for all gRPC client connections. Call `SetGRPCTLS` before starting the server.
+
+**Server-side TLS only** (verify the server, no client certificate):
+
+```go
+if err := kow.SetGRPCTLS(&kow.GRPCTLSConfig{
+    ServerName: "grpc.example.com",
+    CACertFile: "/etc/certs/ca.pem",
+}); err != nil {
+    panic(err)
+}
+```
+
+**Mutual TLS** (both server and client certificates):
+
+```go
+if err := kow.SetGRPCTLS(&kow.GRPCTLSConfig{
+    ServerName: "grpc.example.com",
+    CACertFile: "/etc/certs/ca.pem",
+    CertFile:   "/etc/certs/client.pem",
+    KeyFile:    "/etc/certs/client-key.pem",
+}); err != nil {
+    panic(err)
+}
+```
+
+**Environment-based configuration** — set the following environment variables and call `SetGRPCTLSFromEnv()`:
+
+| Variable | Description |
+|---|---|
+| `GRPC_TLS_SERVER_NAME` | Server name override (SNI) |
+| `GRPC_TLS_CA_CERT_FILE` | Path to CA certificate file |
+| `GRPC_TLS_CLIENT_CERT_FILE` | Path to client certificate file |
+| `GRPC_TLS_CLIENT_KEY_FILE` | Path to client private key file |
+
+```go
+if err := kow.SetGRPCTLSFromEnv(); err != nil {
+    panic(err)
+}
+```
+
+**Disable TLS** (restore insecure connections):
+
+```go
+kow.SetGRPCTLS(nil)
+```
+
+When TLS is configured, all gRPC connections created via `Services()` in your actions automatically use the configured credentials. When no TLS is configured, insecure credentials are used (backward compatible).
+
 ### File Server
 
 ```go
