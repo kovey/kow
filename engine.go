@@ -12,7 +12,6 @@ import (
 
 	"github.com/kovey/pool"
 	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
 )
 
 type Engine struct {
@@ -128,14 +127,17 @@ func (e *Engine) Run(addr string) error {
 }
 
 func (e *Engine) RunHttp2(addr string, conf *http2.Server) error {
-	h2s := conf
-	if h2s == nil {
-		h2s = &http2.Server{}
-	}
 	e.serv = &http.Server{
 		Addr:    addr,
-		Handler: h2c.NewHandler(e, h2s),
+		Handler: e,
 	}
+	if conf != nil {
+		if err := http2.ConfigureServer(e.serv, conf); err != nil {
+			return err
+		}
+	}
+	e.serv.Protocols = new(http.Protocols)
+	e.serv.Protocols.SetUnencryptedHTTP2(true)
 	err := e.serv.ListenAndServe()
 	if err == http.ErrServerClosed {
 		return nil

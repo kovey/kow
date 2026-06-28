@@ -26,7 +26,7 @@ func TestDefault(t *testing.T) {
         <p>This is test</p>
     </body>
 </html>
-`, string(buffer.Bytes()))
+`, buffer.String())
 }
 
 func TestDefaultErr(t *testing.T) {

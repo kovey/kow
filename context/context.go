@@ -327,7 +327,7 @@ func (c *Context) Raw() ([]byte, error) {
 		return c.RawContent, nil
 	}
 
-	defer c.Request.Body.Close()
+	defer func() { _ = c.Request.Body.Close() }()
 	content, err := io.ReadAll(c.Request.Body)
 	c.RawContent = content
 	return c.RawContent, err

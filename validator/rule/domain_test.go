@@ -14,6 +14,6 @@ func TestDomain(t *testing.T) {
 	ok, err = c.Valid("key", "https://www.baidu.com")
 	assert.False(t, ok)
 	assert.NotNil(t, err)
-	ok, err = c.Valid("key", 1)
+	ok, _ = c.Valid("key", 1)
 	assert.False(t, ok)
 }

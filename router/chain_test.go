@@ -22,7 +22,7 @@ type test_middle struct {
 
 func (t *test_middle) Handle(ctx *context.Context) {
 	ctx.Set("test_middle", "test_middle_run")
-	ctx.ParseJson(ctx.ReqData)
+	_ = ctx.ParseJson(ctx.ReqData)
 	ctx.Next()
 }
 
@@ -31,7 +31,7 @@ type test_middle1 struct {
 
 func (t *test_middle1) Handle(ctx *context.Context) {
 	ctx.Set("test_middle1", "test_middle_run1")
-	ctx.ParseJson(ctx.ReqData)
+	_ = ctx.ParseJson(ctx.ReqData)
 	ctx.Next()
 }
 
@@ -41,7 +41,7 @@ type test_file_server struct {
 func (t *test_file_server) ServeHTTP(w http.ResponseWriter, request *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Add("Content-Type", "application/octet-stream")
-	w.Write([]byte(`{"code":0,"msg":""}`))
+	_,_ = w.Write([]byte(`{"code":0,"msg":""}`))
 }
 
 type test_action struct {

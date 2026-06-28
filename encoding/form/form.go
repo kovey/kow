@@ -18,7 +18,7 @@ func Init(m func(v any) ([]byte, error), u func(data map[string][]string, v any)
 
 func formMarshal(v any) ([]byte, error) {
 	ref := &Reflect{Type: reflect.TypeOf(v)}
-	if ref.Type.Kind() == reflect.Ptr {
+	if ref.Type.Kind() == reflect.Pointer {
 		ref.Type = ref.Type.Elem()
 	}
 
