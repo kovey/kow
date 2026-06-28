@@ -52,7 +52,7 @@ func dialOptions() []grpc.DialOption {
 func dialGRPC(serviceName krpc.ServiceName, group string) (grpc.ClientConnInterface, error) {
 	target := fmt.Sprintf("%s://%s", dg.Scheme_Etcd, serviceName.Group(group))
 	opts := dialOptions()
-	conn, err := grpc.Dial(target, opts...)
+	conn, err := grpc.NewClient(target, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("grpc dial %s: %w", target, err)
 	}

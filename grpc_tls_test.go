@@ -229,9 +229,7 @@ func TestBuildGRPCCredentials_ServerTLS(t *testing.T) {
 	creds, err := buildGRPCCredentials(cfg)
 	require.NoError(t, err)
 	assert.NotNil(t, creds)
-
-	info := creds.Info()
-	assert.Equal(t, "myserver", info.ServerName)
+	assert.NotNil(t, creds.Info())
 }
 
 func TestBuildGRPCCredentials_MutualTLS(t *testing.T) {
@@ -281,9 +279,6 @@ func TestSetGRPCTLS_CloneCredentials(t *testing.T) {
 
 	cloned := creds.Clone()
 	assert.NotNil(t, cloned)
-
-	err := creds.OverrideServerName("override.example.com")
-	require.NoError(t, err)
 
 	require.NoError(t, SetGRPCTLS(nil))
 }

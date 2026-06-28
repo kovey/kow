@@ -77,11 +77,11 @@ func TestUnmarshal_EmptyData(t *testing.T) {
 
 func TestUnmarshal_IntTypes(t *testing.T) {
 	type testStruct struct {
-		I   int    `uri:"i"`
-		I8  int8   `uri:"i8"`
-		I16 int16  `uri:"i16"`
-		I32 int32  `uri:"i32"`
-		I64 int64  `uri:"i64"`
+		I   int   `uri:"i"`
+		I8  int8  `uri:"i8"`
+		I16 int16 `uri:"i16"`
+		I32 int32 `uri:"i32"`
+		I64 int64 `uri:"i64"`
 	}
 	var s testStruct
 	data := map[string]string{
