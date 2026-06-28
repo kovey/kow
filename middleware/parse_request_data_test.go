@@ -14,9 +14,9 @@ import (
 )
 
 type req_data_parse struct {
-	Email    string `json:"email" xml:"email"`
-	Password string `json:"password" xml:"password"`
-	Age      int    `json:"age" xml:"age"`
+	Email    string `json:"email" form:"email" xml:"email"`
+	Password string `json:"password" form:"password" xml:"password"`
+	Age      int    `json:"age" form:"age" xml:"age"`
 }
 
 func (r *req_data_parse) ValidParams() map[string]any {
@@ -72,5 +72,5 @@ func TestParseRequestDataErr(t *testing.T) {
 	defer result.Body.Close()
 	body, err := io.ReadAll(result.Body)
 	assert.Nil(t, err)
-	assert.Equal(t, `{"code":1000,"msg":"value[] of field[email] is not email","data":{}}`, string(body))
+	assert.Equal(t, `{"code":1000,"msg":"value[kovey@com] of field[email] is not email","data":{}}`, string(body))
 }
